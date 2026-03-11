@@ -1,12 +1,14 @@
 using System;
-
+// This class handles the User Interface (the "Menu").
+// It orchestrates the flow of the program by calling other classes.
 class Program
 {
     static void Main(string[] args)
     {
+        // Instances of classes to abstract the logic away from Main.
         Journal journal = new Journal();
         PromptGenerator promptGen = new PromptGenerator();
-
+         // AUTOMATIC LOAD: Checks for existing data upon startup.
         if (File.Exists("journal.csv"))
         { 
           journal.LoadFromCSV("journal.csv");
@@ -15,7 +17,7 @@ class Program
         }
 
         int choice = 0;
-
+         // The Menu Loop for user interaction
         while (choice != 7)
         {
             Console.WriteLine("\nJournal Menu");
@@ -31,7 +33,7 @@ class Program
             choice = int.Parse(Console.ReadLine());
 
             if (choice == 1)
-            {
+            {  // Abstraction: Program doesn't know how the prompt is picked.
                 string prompt = promptGen.GetRandomPrompt();
                 Console.WriteLine(prompt);
 
@@ -43,7 +45,8 @@ class Program
 
                 Entry entry = new Entry();
 
-                // Capture Date and Time separately
+                
+                // Encapsulation: Creating a single object to hold all entry data.
                 DateTime now = DateTime.Now;
                 entry._date = DateTime.Now.ToShortDateString();
                 entry._time = now.ToShortTimeString(); // This adds the TIME (e.g., 2:30 PM)
@@ -51,7 +54,7 @@ class Program
                 entry._promptText = prompt;
                 entry._entryText = response;
                 entry._mood = mood;
-
+                // Add to list and immediately save to disk for data safety.
                 journal.AddEntry(entry);
 
                 journal.SaveToCSV("journal.csv");

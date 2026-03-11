@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+// This class manages the collection of journal entries and file storage.
 public class Journal
 {
     public List<Entry> _entries = new List<Entry>();
