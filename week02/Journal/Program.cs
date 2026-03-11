@@ -7,6 +7,13 @@ class Program
         Journal journal = new Journal();
         PromptGenerator promptGen = new PromptGenerator();
 
+        if (File.Exists("journal.csv"))
+        { 
+          journal.LoadFromCSV("journal.csv");
+
+          Console.WriteLine("Previous journal entries loaded automatically.");
+        }
+
         int choice = 0;
 
         while (choice != 7)
@@ -42,6 +49,10 @@ class Program
                 entry._mood = mood;
 
                 journal.AddEntry(entry);
+
+                journal.SaveToCSV("journal.csv");
+
+                Console.WriteLine("Entry saved automatically to journal.csv!");
             }
 
             else if (choice == 2)
