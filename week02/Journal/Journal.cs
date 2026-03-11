@@ -45,14 +45,15 @@ public class Journal
             }
         }
     }
+    
 
     public void LoadFromCSV(string filename)
     {
         if (!File.Exists(filename))
         {
-             
-          Console.WriteLine("File not found. Please check the filename.");
-          return;
+
+            Console.WriteLine("File not found. Please check the filename.");
+            return;
 
         }
         string[] lines = File.ReadAllLines(filename);
@@ -71,7 +72,7 @@ public class Journal
 
             _entries.Add(entry);
         }
-        
+
         Console.WriteLine("Journal loaded successfully!");
     }
 }
