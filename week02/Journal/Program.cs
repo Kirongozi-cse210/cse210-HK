@@ -43,7 +43,11 @@ class Program
 
                 Entry entry = new Entry();
 
+                // Capture Date and Time separately
+                DateTime now = DateTime.Now;
                 entry._date = DateTime.Now.ToShortDateString();
+                entry._time = now.ToShortTimeString(); // This adds the TIME (e.g., 2:30 PM)
+
                 entry._promptText = prompt;
                 entry._entryText = response;
                 entry._mood = mood;

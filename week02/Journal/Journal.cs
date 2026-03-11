@@ -62,15 +62,18 @@ public class Journal
 
         foreach (string line in lines)
         {
-            string[] parts = line.Split(",");
+            string[] parts = line.Split("|"); // Use | for safety
+            if (parts.Length >= 5) // Now we expect 5 parts
+            {
 
-            Entry entry = new Entry();
-            entry._date = parts[0];
-            entry._promptText = parts[1];
-            entry._entryText = parts[2];
-            entry._mood = parts[3];
-
-            _entries.Add(entry);
+               Entry entry = new Entry();
+               entry._date = parts[0];
+               entry._time = parts[1];        // NEW: Load the time
+               entry._promptText = parts[2];
+               entry._entryText = parts[3];
+               entry._mood = parts[4];
+               _entries.Add(entry);
+            }
         }
 
         Console.WriteLine("Journal loaded successfully!");
