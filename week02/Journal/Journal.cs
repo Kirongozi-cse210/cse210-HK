@@ -2,60 +2,67 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public class Journal {
-    public List<JournalEntry> Entries { get; set; }
+public class Journal
+{
+    public List<Entry> _entries = new List<Entry>();
 
-    public Journal() {
-        Entries = new List<JournalEntry>();
+    public void AddEntry(Entry entry)
+    {
+        _entries.Add(entry);
     }
 
-    public void AddEntry(JournalEntry entry) {
-        Entries.Add(entry);
-    }
-
-    public void DisplayEntries() {
-        foreach (var entry in Entries) {
-            entry.Display();
-            Console.WriteLine();
+    public void DisplayAll()
+    {
+        foreach (Entry e in _entries)
+        {
+            e.Display();
         }
     }
 
-    public void SaveToFile(string filename) {
-        using (StreamWriter outputFile = new StreamWriter(filename)) {
-            foreach (var entry in Entries) {
-                // Escape commas in the content
-                string escapedContent = entry.Content.Replace(",", "<comma>");
-                outputFile.WriteLine($"{entry.Title},{entry.Date.ToShortDateString()},{entry.Mood},{entry.Alert},{escapedContent}");
+    public void CountEntries()
+    {
+        Console.WriteLine($"Total Journal Entries: {_entries.Count}");
+    }
+
+    public void SearchByDate(string date)
+    {
+        foreach (Entry e in _entries)
+        {
+            if (e._date == date)
+            {
+                e.Display();
             }
         }
     }
 
-    public void LoadFromFile(string filename) {
-        try {
-            string[] lines = File.ReadAllLines(filename);
-            foreach (string line in lines) {
-                string[] parts = line.Split(",");
-                if (parts.Length >= 5) {
-                    string title = parts[0];
-                    DateTime date = DateTime.Parse(parts[1]);
-                    string mood = parts[2];
-                    bool alert = bool.Parse(parts[3]);
-                    // Unescape commas in the content
-                    string content = string.Join(",", parts, 4, parts.Length - 4).Replace("<comma>", ",");
-
-                    JournalEntry entry = new JournalEntry(title, content, mood, alert) {
-                        Date = date
-                    };
-                    Entries.Add(entry);
-                }
-                else {
-                    Console.WriteLine("Skipping an improperly formatted line.");
-                }
+    public void SaveToCSV(string filename)
+    {
+        using (StreamWriter output = new StreamWriter(filename))
+        {
+            foreach (Entry e in _entries)
+            {
+                output.WriteLine(e.ToCSV());
             }
-        } catch (FileNotFoundException) {
-            Console.WriteLine("File not found. Please check the filename and try again.");
-        } catch (Exception ex) {
-            Console.WriteLine($"An error occurred while loading the file: {ex.Message}");
+        }
+    }
+
+    public void LoadFromCSV(string filename)
+    {
+        string[] lines = File.ReadAllLines(filename);
+
+        _entries.Clear();
+
+        foreach (string line in lines)
+        {
+            string[] parts = line.Split(",");
+
+            Entry entry = new Entry();
+            entry._date = parts[0];
+            entry._promptText = parts[1];
+            entry._entryText = parts[2];
+            entry._mood = parts[3];
+
+            _entries.Add(entry);
         }
     }
 }

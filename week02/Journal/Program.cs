@@ -1,61 +1,82 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 
-public class Journal {
-    public List<JournalEntry> Entries { get; set; }
+class Program
+{
+    static void Main(string[] args)
+    {
+        Journal journal = new Journal();
+        PromptGenerator promptGen = new PromptGenerator();
 
-    public Journal() {
-        Entries = new List<JournalEntry>();
-    }
+        int choice = 0;
 
-    public void AddEntry(JournalEntry entry) {
-        Entries.Add(entry);
-    }
+        while (choice != 7)
+        {
+            Console.WriteLine("\nJournal Menu");
+            Console.WriteLine("1. Write Entry");
+            Console.WriteLine("2. Display Journal");
+            Console.WriteLine("3. Save Journal");
+            Console.WriteLine("4. Load Journal");
+            Console.WriteLine("5. Search by Date");
+            Console.WriteLine("6. Count Entries");
+            Console.WriteLine("7. Exit");
 
-    public void DisplayEntries() {
-        foreach (var entry in Entries) {
-            entry.Display();
-            Console.WriteLine();
-        }
-    }
+            Console.Write("Choose option: ");
+            choice = int.Parse(Console.ReadLine());
 
-    public void SaveToFile(string filename) {
-        using (StreamWriter outputFile = new StreamWriter(filename)) {
-            foreach (var entry in Entries) {
-                // Escape commas in the content
-                string escapedContent = entry.Content.Replace(",", "<comma>");
-                outputFile.WriteLine($"{entry.Title},{entry.Date.ToShortDateString()},{entry.Mood},{entry.Alert},{escapedContent}");
+            if (choice == 1)
+            {
+                string prompt = promptGen.GetRandomPrompt();
+                Console.WriteLine(prompt);
+
+                Console.Write("Your response: ");
+                string response = Console.ReadLine();
+
+                Console.Write("Your mood today: ");
+                string mood = Console.ReadLine();
+
+                Entry entry = new Entry();
+
+                entry._date = DateTime.Now.ToShortDateString();
+                entry._promptText = prompt;
+                entry._entryText = response;
+                entry._mood = mood;
+
+                journal.AddEntry(entry);
             }
-        }
-    }
 
-    public void LoadFromFile(string filename) {
-        try {
-            string[] lines = File.ReadAllLines(filename);
-            foreach (string line in lines) {
-                string[] parts = line.Split(",");
-                if (parts.Length >= 5) {
-                    string title = parts[0];
-                    DateTime date = DateTime.Parse(parts[1]);
-                    string mood = parts[2];
-                    bool alert = bool.Parse(parts[3]);
-                    // Unescape commas in the content
-                    string content = string.Join(",", parts, 4, parts.Length - 4).Replace("<comma>", ",");
-
-                    JournalEntry entry = new JournalEntry(title, content, mood, alert) {
-                        Date = date
-                    };
-                    Entries.Add(entry);
-                }
-                else {
-                    Console.WriteLine("Skipping an improperly formatted line.");
-                }
+            else if (choice == 2)
+            {
+                journal.DisplayAll();
             }
-        } catch (FileNotFoundException) {
-            Console.WriteLine("File not found. Please check the filename and try again.");
-        } catch (Exception ex) {
-            Console.WriteLine($"An error occurred while loading the file: {ex.Message}");
+
+            else if (choice == 3)
+            {
+                Console.Write("Enter filename: ");
+                string file = Console.ReadLine();
+
+                journal.SaveToCSV(file);
+            }
+
+            else if (choice == 4)
+            {
+                Console.Write("Enter filename: ");
+                string file = Console.ReadLine();
+
+                journal.LoadFromCSV(file);
+            }
+
+            else if (choice == 5)
+            {
+                Console.Write("Enter date (MM/DD/YYYY): ");
+                string date = Console.ReadLine();
+
+                journal.SearchByDate(date);
+            }
+
+            else if (choice == 6)
+            {
+                journal.CountEntries();
+            }
         }
     }
 }
