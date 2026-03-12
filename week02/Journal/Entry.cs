@@ -13,7 +13,7 @@ public class Entry
         // Added _time to the display output
         Console.WriteLine($"Date: {_date} Time: {_time} - Prompt: {_promptText}");
         Console.WriteLine($"Prompt: {_promptText}");
-        Console.WriteLine($"Response: {_entryText}");
+        Console.WriteLine($"- {_entryText}");
         Console.WriteLine($"Mood: {_mood}");
         Console.WriteLine("--------------------------------");
     }
