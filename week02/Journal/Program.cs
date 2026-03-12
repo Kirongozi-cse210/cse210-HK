@@ -38,7 +38,7 @@ class Program
                 string prompt = promptGen.GetRandomPrompt();
                 Console.WriteLine(prompt);
 
-                Console.Write("Your response: ");
+                Console.Write("> ");
                 string response = Console.ReadLine();
 
                 Console.Write("Your mood today: ");
