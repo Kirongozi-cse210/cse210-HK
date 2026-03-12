@@ -20,7 +20,8 @@ class Program
          // The Menu Loop for user interaction
         while (choice != 7)
         {
-            Console.WriteLine("\nJournal Menu");
+            Console.WriteLine("\nWelcome to the Journal Program!:");
+            Console.WriteLine("\nPlease select one the following choices:");
             Console.WriteLine("1. Write Entry");
             Console.WriteLine("2. Display Journal");
             Console.WriteLine("3. Save Journal");
