@@ -3,7 +3,6 @@
   1. Mood Tracking: Added a '_mood' field to capture emotional states.
   2. Time Stamps: Records the exact time via 'ToShortTimeString()' alongside the date.
   3. Search & Metrics: Added 'Search by Date' and 'Count Entries' for better data management.
-  4. Edit Functionality: Allows users to modify existing entries after loading.
   5. Auto-Persistence: Program automatically loads 'journal.csv' on startup and saves after every entry.
 */
 
