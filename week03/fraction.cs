@@ -1,30 +1,41 @@
+using System;
+
 public class Fraction
 {
     private int _top;
     private int _bottom;
 
-    // Existing constructors...
-    public Fraction() { _top = 1; _bottom = 1; }
-    public Fraction(int top, int bottom) { _top = top; _bottom = bottom; }
-
-    // New Constructor: Parses a string like "3/4"
-    public Fraction(string fractionString)
+    public Fraction()
     {
-        string[] parts = fractionString.Split('/');
-
-        if (parts.Length == 2)
-        {
-            _top = int.Parse(parts[0]);
-            _bottom = int.Parse(parts[1]);
-        }
-        else
-        {
-            // If there's no "/", treat it as a whole number (e.g., "5")
-            _top = int.Parse(parts[0]);
-            _bottom = 1;
-        }
+        // Default to 1/1
+        _top = 1;
+        _bottom = 1;
     }
 
-    public string GetFractionString() => $"{_top}/{_bottom}";
-    public double GetDecimalValue() => (double)_top / _bottom;
+    public Fraction(int wholeNumber)
+    {
+        _top = wholeNumber;
+        _bottom = 1;
+    }
+
+    public Fraction(int top, int bottom)
+    {
+        _top = top;
+        _bottom = bottom;
+    }
+
+    public string GetFractionString()
+    {
+        // Notice that this is not stored as a member variable.
+        // Is is just a temporary, local variable that will be recomputed each time this is called.
+        string text = $"{_top}/{_bottom}";
+        return text;
+    }
+
+    public double GetDecimalValue()
+    {
+        // Notice that this is not stored as a member variable.
+        // Is will be recomputed each time this is called.
+        return (double)_top / (double)_bottom;
+    }
 }

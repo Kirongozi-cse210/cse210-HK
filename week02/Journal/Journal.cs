@@ -1,81 +1,71 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-// This class manages the collection of journal entries and file storage.
+using System.Linq;
+
 public class Journal
-{// A private list to encapsulate the entries and protect the data.
-    public List<Entry> _entries = new List<Entry>();
-    // Adds a new entry object to the journal list.
-    public void AddEntry(Entry entry)
-    {
-        _entries.Add(entry);
-    }
-    // Iterates through all entries and calls their internal display method.
+{
+    private List<Entry> _entries = new List<Entry>();
+
+    public void AddEntry(Entry newEntry) => _entries.Add(newEntry);
+
     public void DisplayAll()
     {
-        foreach (Entry e in _entries)
+        foreach (var e in _entries) e.Display();
+    }
+
+    public void DisplayAllWithIndexes()
+    {
+        for (int i = 0; i < _entries.Count; i++)
         {
-            e.Display();
+            Console.Write($"[{i}] ");
+            _entries[i].Display();
         }
     }
-    // Provides a quick count of how many entries are in the system.
-    public void CountEntries()
+
+    public void EditEntry(int index)
     {
-        Console.WriteLine($"Total Journal Entries: {_entries.Count}");
-    }
-    // Searches the list for entries matching a specific date string.
-    public void SearchByDate(string date)
-    {
-        foreach (Entry e in _entries)
+        if (index >= 0 && index < _entries.Count)
         {
-            if (e._date == date)
-            {
-                e.Display();
-            }
+            Console.Write("Enter new response: ");
+            _entries[index]._entryText = Console.ReadLine();
+            Console.Write("Update mood: ");
+            _entries[index]._mood = Console.ReadLine();
+            Console.WriteLine("Entry updated!");
         }
     }
-    // Saves all current entries to a file using the | delimiter for data integrity.
+
     public void SaveToCSV(string filename)
     {
-        using (StreamWriter output = new StreamWriter(filename))
+        using (StreamWriter sw = new StreamWriter(filename))
         {
-            foreach (Entry e in _entries)
-            {   // Abstraction: Entry knows how to format itself for saving.
-                output.WriteLine(e.ToCSV());
-            }
+            foreach (var e in _entries)
+                sw.WriteLine($"{e._date}|{e._time}|{e._promptText}|{e._entryText}|{e._mood}");
         }
     }
-    
 
     public void LoadFromCSV(string filename)
     {
-        if (!File.Exists(filename))
+        if (File.Exists(filename))
         {
-
-            Console.WriteLine("File not found. Please check the filename.");
-            return;
-
-        }
-        string[] lines = File.ReadAllLines(filename);
-
-        _entries.Clear();
-
-        foreach (string line in lines)
-        {
-            string[] parts = line.Split("|"); // Use | for safety
-            if (parts.Length >= 5) // Now we expect 5 parts
+            _entries.Clear(); // Clears memory to load the new file
+            string[] lines = File.ReadAllLines(filename);
+            foreach (string line in lines)
             {
-
-               Entry entry = new Entry();
-               entry._date = parts[0];
-               entry._time = parts[1];        // NEW: Load the time
-               entry._promptText = parts[2];
-               entry._entryText = parts[3];
-               entry._mood = parts[4];
-               _entries.Add(entry);
+                string[] p = line.Split('|');
+                if (p.Length == 5)
+                {
+                    _entries.Add(new Entry { _date=p[0], _time=p[1], _promptText=p[2], _entryText=p[3], _mood=p[4] });
+                }
             }
         }
-
-        Console.WriteLine("Journal loaded successfully!");
     }
+
+    public void SearchByDate(string date)
+    {
+        var found = _entries.Where(e => e._date == date).ToList();
+        if (found.Any()) foreach (var f in found) f.Display();
+        else Console.WriteLine("No entries found for that date.");
+    }
+
+    public void CountEntries() => Console.WriteLine($"Total Entries: {_entries.Count}");
 }

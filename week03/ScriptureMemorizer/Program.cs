@@ -1,19 +1,10 @@
 using System;
+using System;
 
 class Program
 {
     static void Main(string[] args)
     {
-        string input = Console.ReadLine(); // Lit l'entrée (ex: "1/3")
-        string[] parts = input.Split('/');
-
-        if (parts.Length == 2)
-        {
-            double numerateur = Convert.ToDouble(parts[0]);
-            double denominateur = Convert.ToDouble(parts[1]);
-
-            double resultat = numerateur / denominateur;
-            Console.WriteLine(resultat);
-        }
+        Console.WriteLine("Hello World! This is the ScriptureMemorizer Project.");
     }
 }
