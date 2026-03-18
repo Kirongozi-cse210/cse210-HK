@@ -4,36 +4,49 @@ using System.Linq;
 
 public class Scripture
 {
-    public Reference Reference { get; set; }
-    public List<Word> Words { get; set; }
+    private Reference _reference;
+    private List<Word> _words;
+    private bool _hintMode;
 
     public Scripture(Reference reference, string text)
     {
-        Reference = reference;
-        Words = text.Split(new[] { ' ' }, StringSplitOptions.None)
-            .Select(word => new Word(word))
-            .ToList();
+        _reference = reference;
+        _words = text.Split(' ')
+                     .Select(w => new Word(w))
+                     .ToList();
+
+        _hintMode = false;
     }
 
-    public void Display()
+    public void HideRandomWords(int numberToHide, Random random)
     {
-        Console.WriteLine(Reference.ToString());
-        Console.WriteLine(string.Join(" ", Words.Select(w => w.ToString())));
-    }
+        List<Word> visibleWords = _words.Where(w => !w.IsHidden()).ToList();
 
-    public void HideRandomWord()
-    {
-        var visibleWords = Words.Where(w => !w.Hidden).ToList();
-        if (visibleWords.Any())
+        for (int i = 0; i < numberToHide && visibleWords.Count > 0; i++)
         {
-            var random = new Random();
-            var wordToHide = visibleWords[random.Next(visibleWords.Count)];
-            wordToHide.Hide();
+            int index = random.Next(visibleWords.Count);
+            visibleWords[index].Hide();
+            visibleWords.RemoveAt(index);
         }
     }
 
-    public bool AllWordsHidden()
+    public void ToggleHintMode()
     {
-        return Words.All(w => w.Hidden);
+        _hintMode = !_hintMode;
+
+        foreach (Word word in _words)
+        {
+            word.SetHint(_hintMode);
+        }
+    }
+
+    public string GetDisplayText()
+    {
+        return $"{_reference.GetDisplayText()}: {string.Join(" ", _words.Select(w => w.GetDisplayText()))}";
+    }
+
+    public bool IsCompletelyHidden()
+    {
+        return _words.All(w => w.IsHidden());
     }
 }

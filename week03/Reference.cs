@@ -1,36 +1,40 @@
+using System;
+using System.Linq;
+
 public class Reference
 {
-    public string Book { get; set; }
-    public int Chapter { get; set; }
-    public int StartVerse { get; set; }
-    public int? EndVerse { get; set; }
+    private string _book;
+    private int _chapter;
+    private int _verse;
+    private int? _endVerse;
 
-    public Reference(string book, int chapter, int startVerse, int? endVerse = null)
+    public Reference(string referenceText)
     {
-        Book = book;
-        Chapter = chapter;
-        StartVerse = startVerse;
-        EndVerse = endVerse;
-    }
+        string[] parts = referenceText.Split(' ');
 
-    public static Reference FromString(string referenceStr)
-    {
-        // Parse the reference string into book, chapter, startVerse, and endVerse
-        var parts = referenceStr.Split(' ');
-        var book = string.Join(" ", parts, 0, parts.Length - 1);
-        var chapterVerse = parts[parts.Length - 1].Split(':');
-        var chapter = int.Parse(chapterVerse[0]);
-        var verses = chapterVerse[1].Split('-');
-        var startVerse = int.Parse(verses[0]);
-        int? endVerse = verses.Length > 1 ? int.Parse(verses[1]) : (int?)null;
-        return new Reference(book, chapter, startVerse, endVerse);
-    }
+        _book = string.Join(" ", parts.Take(parts.Length - 1));
+        string[] numbers = parts.Last().Split(':');
 
-    public override string ToString()
-    {
-        if (EndVerse.HasValue)
-            return $"{Book} {Chapter}:{StartVerse}-{EndVerse}";
+        _chapter = int.Parse(numbers[0]);
+
+        if (numbers[1].Contains("-"))
+        {
+            string[] verses = numbers[1].Split('-');
+            _verse = int.Parse(verses[0]);
+            _endVerse = int.Parse(verses[1]);
+        }
         else
-            return $"{Book} {Chapter}:{StartVerse}";
+        {
+            _verse = int.Parse(numbers[1]);
+            _endVerse = null;
+        }
+    }
+
+    public string GetDisplayText()
+    {
+        if (_endVerse == null)
+            return $"{_book} {_chapter}:{_verse}";
+        else
+            return $"{_book} {_chapter}:{_verse}-{_endVerse}";
     }
 }
