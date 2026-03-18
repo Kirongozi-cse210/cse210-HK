@@ -56,7 +56,7 @@ class Program
             if (input == "h")
                 selectedScripture.ToggleHintMode();
             else
-                selectedScripture.HideRandomWords(3, random);
+                selectedScripture.HideRandomWords(3);
         }
     }
 
