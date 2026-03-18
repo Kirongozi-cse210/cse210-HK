@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5,21 +6,17 @@ using System.IO;
 /*
  * EXCEEDING REQUIREMENTS REPORT:
  * 
- * This program goes beyond the core requirements in the following ways:
- * 
  * 1. Scripture Library from File:
- *    Instead of hardcoding a single scripture, the program loads multiple scriptures
- *    from an external file (scriptures.txt). This allows easy expansion and customization.
+ *    Scriptures are loaded from an external file (scriptures.txt),
+ *    allowing easy expansion without changing code.
  * 
  * 2. Random Scripture Selection:
- *    Each time the program runs, a random scripture is selected from the library,
- *    providing a different memorization experience.
+ *    A random scripture is selected each time the program runs.
  * 
- * 3. Hint Mode (First-Letter Support):
- *    A hint mode can be toggled by the user. When enabled, hidden words display only
- *    their first letter followed by underscores, helping users recall words without
- *    revealing them completely.
+ * 3. Hint Mode:
+ *    Users can toggle hint mode to display the first letter of hidden words.
  */
+
 class Program
 {
     static void Main(string[] args)
@@ -56,7 +53,7 @@ class Program
             if (input == "h")
                 selectedScripture.ToggleHintMode();
             else
-                selectedScripture.HideRandomWords(3);
+                selectedScripture.HideRandomWords(3, random);
         }
     }
 
