@@ -13,13 +13,7 @@ public class Address
         _country = country;
     }
 
-    public bool IsUSA()
-    {
-        return _country.ToLower() == "usa";
-    }
+    public bool IsInUSA() => _country.ToUpper() == "USA";
 
-    public string GetFullAddress()
-    {
-        return $"{_street}\n{_city}, {_state}\n{_country}";
-    }
+    public string GetFullAddress() => $"{_street}\n{_city}, {_state}\n{_country}";
 }

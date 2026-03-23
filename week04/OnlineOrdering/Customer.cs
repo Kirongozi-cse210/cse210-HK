@@ -9,18 +9,7 @@ public class Customer
         _address = address;
     }
 
-    public string GetName()
-    {
-        return _name;
-    }
-
-    public Address GetAddress()
-    {
-        return _address;
-    }
-
-    public bool LivesInUSA()
-    {
-        return _address.IsUSA();
-    }
+    public bool LivesInUSA() => _address.IsInUSA();
+    public string GetName() => _name;
+    public string GetAddressString() => _address.GetFullAddress();
 }
