@@ -37,7 +37,7 @@ class Program
             Console.WriteLine("3. Start listing Activity");
             Console.WriteLine("4. View Activity Log");
             Console.WriteLine("5. Quit");
-            Console.Write("Choose an option: ");
+            Console.Write("Select a choice from the menu: ");
 
             choice = int.Parse(Console.ReadLine());
 
