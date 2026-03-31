@@ -31,10 +31,10 @@ class Program
         while (choice != 5)
         {
             Console.Clear();
-            Console.WriteLine("Mindfulness App");
-            Console.WriteLine("1. Breathing Activity");
-            Console.WriteLine("2. Reflection Activity");
-            Console.WriteLine("3. Listing Activity");
+            Console.WriteLine("Menu Options:");
+            Console.WriteLine("1. Start breathing Activity");
+            Console.WriteLine("2. Start reflection Activity");
+            Console.WriteLine("3. Start listing Activity");
             Console.WriteLine("4. View Activity Log");
             Console.WriteLine("5. Quit");
             Console.Write("Choose an option: ");
