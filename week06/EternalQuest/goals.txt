@@ -1,0 +1,7 @@
+450
+SimpleGoal:Simple Goal|Read scripture everyday|100|True
+EternalGoal:study for eternal live|BYU Pathway world wide|80
+SimpleGoal:Visit|This week I will visit a member from my stake Kolwezi 1|50|True
+ChecklistGoal:2|Visit|40|100|3|600
+SimpleGoal:Simple Goal|To plane for each how can I study and successful all assignment before the date line|100|True
+ 
