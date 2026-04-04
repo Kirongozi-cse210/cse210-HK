@@ -1,139 +1,174 @@
+
 using System;
-using System.Collections.Generic;
-using System.IO;
+
 
 public class GoalManager
 {
-    private List<Goal> _goals = new List<Goal>();
-    private int _score = 0;
-    private string _filePath = "goals.txt";
+    private List<Goal> _goals;
+    private int _score;
+    private int _streak;
 
-    public GoalManager() { }
+    public GoalManager()
+    {
+        _goals = new List<Goal>();
+        _score = 0;
+        _streak = 0;
+    }
 
-    // Initialize and load goals
     public void Start()
     {
-        LoadGoals();  // Load existing goals from file if any
+        int choice = 0;
+
+        while (choice != 7)
+        {
+            DisplayPlayerInfo();
+
+            Console.WriteLine("Menu Options:");
+            Console.WriteLine("1. Create New Goal");
+            Console.WriteLine("2. List Goal Names");
+            Console.WriteLine("3. List Goal Details");
+            Console.WriteLine("4. Record Event");
+            Console.WriteLine("5. Save Goals");
+            Console.WriteLine("6. Load Goals");
+            Console.WriteLine("7. Quit");
+
+            Console.Write("Select a choice: ");
+            int.TryParse(Console.ReadLine(), out choice);
+
+            switch (choice)
+            {
+                case 1: CreateGoal(); break;
+                case 2: ListGoalNames(); break;
+                case 3: ListGoalDetails(); break;
+                case 4: RecordEvent(); break;
+                case 5: SaveGoals(); break;
+                case 6: LoadGoals(); break;
+                case 7: return;
+            }
+        }
     }
 
-    // Display player's current score
     public void DisplayPlayerInfo()
     {
-        Console.WriteLine($"Player's Score: {_score}");
-        Console.WriteLine("Goals Created: ");
-        ListGoals();
+        int level = _score / 1000;
+
+        Console.WriteLine($"\n⭐ Score: {_score}");
+        Console.WriteLine($"🏆 Level: {level}");
+        Console.WriteLine($"🔥 Streak: {_streak}\n");
     }
 
-    // List all created goals
-    public void ListGoals()
+    public void ListGoalNames()
     {
-        if (_goals.Count == 0)
+        for (int i = 0; i < _goals.Count; i++)
         {
-            Console.WriteLine("No goals available.");
-            return;
-        }
-
-        foreach (var goal in _goals)
-        {
-            Console.WriteLine(goal.GetStringRepresentation());
+            Console.WriteLine($"{i + 1}. {_goals[i]._shortName}");
         }
     }
 
-    // Create a new goal based on user input
+    public void ListGoalDetails()
+    {
+        for (int i = 0; i < _goals.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {_goals[i].GetDetailsString()}");
+        }
+    }
     public void CreateGoal()
     {
-        Console.WriteLine("Choose a goal type:");
         Console.WriteLine("1. Simple Goal");
         Console.WriteLine("2. Eternal Goal");
         Console.WriteLine("3. Checklist Goal");
 
-        string choice = Console.ReadLine();
+        int type = int.Parse(Console.ReadLine());
 
-        Console.Write("Enter goal name: ");
+        Console.Write("Name: ");
         string name = Console.ReadLine();
-        Console.Write("Enter goal description: ");
-        string description = Console.ReadLine();
-        Console.Write("Enter points for this goal: ");
-        string points = Console.ReadLine();
 
-        Goal newGoal = null;
+        Console.Write("Description: ");
+        string desc = Console.ReadLine();
 
-        // Depending on user choice, create the corresponding goal
-        switch (choice)
+        Console.Write("Points: ");
+        int points = int.Parse(Console.ReadLine());
+
+        if (type == 1)
+            _goals.Add(new SimpleGoal(name, desc, points));
+
+        else if (type == 2)
+            _goals.Add(new EternalGoal(name, desc, points));
+
+        else if (type == 3)
         {
-            case "1":
-                newGoal = new SimpleGoal(name, description, points);
-                break;
-            case "2":
-                newGoal = new EternalGoal(name, description, points);
-                break;
-            case "3":
-                Console.Write("How many times must this goal be completed to finish? ");
-                int target = int.Parse(Console.ReadLine());
-                Console.Write("Enter bonus points for completing the goal: ");
-                int bonus = int.Parse(Console.ReadLine());
-                newGoal = new ChecklistGoal(name, description, points, target, bonus);
-                break;
-            default:
-                Console.WriteLine("Invalid choice.");
-                return;
-        }
+            Console.Write("Target: ");
+            int target = int.Parse(Console.ReadLine());
 
-        _goals.Add(newGoal);
-        Console.WriteLine($"Goal '{name}' created successfully!");
+            Console.Write("Bonus: ");
+            int bonus = int.Parse(Console.ReadLine());
+
+            _goals.Add(new ChecklistGoal(name, desc, points, target, bonus));
+        }
     }
 
-    // Save all goals to a file
+    public void RecordEvent()
+    {
+        ListGoalNames();
+        Console.Write("Select goal: ");
+        int index = int.Parse(Console.ReadLine()) - 1;
+
+        int points = _goals[index].RecordEvent();
+
+        if (points > 0)
+        {
+            _streak++;
+
+            // 🎮 STREAK BONUS
+            if (_streak % 5 == 0)
+            {
+                Console.WriteLine("🔥 STREAK BONUS! +100 points!");
+                points += 100;
+            }
+        }
+
+        _score += points;
+
+        Console.WriteLine($"You earned {points} points!");
+    }
+
     public void SaveGoals()
     {
-        using (StreamWriter writer = new StreamWriter(_filePath))
+        using (StreamWriter sw = new StreamWriter("goals.txt"))
         {
-            foreach (var goal in _goals)
+            sw.WriteLine(_score);
+            sw.WriteLine(_streak);
+
+            foreach (Goal g in _goals)
             {
-                writer.WriteLine(goal.GetStringRepresentation());  // Save goal data to file
+                sw.WriteLine(g.GetStringRepresentation());
             }
         }
-        Console.WriteLine("Goals saved successfully!");
     }
 
-    // Load goals from a file
     public void LoadGoals()
     {
-        if (!File.Exists(_filePath))
+        if (!File.Exists("goals.txt")) return;
+
+        string[] lines = File.ReadAllLines("goals.txt");
+
+        _goals.Clear();
+        _score = int.Parse(lines[0]);
+        _streak = int.Parse(lines[1]);
+
+        for (int i = 2; i < lines.Length; i++)
         {
-            Console.WriteLine("No goals file found.");
-            return;
+            string[] parts = lines[i].Split("|");
+
+            if (parts[0] == "SimpleGoal")
+                _goals.Add(new SimpleGoal(parts[1], parts[2], int.Parse(parts[3]), bool.Parse(parts[4])));
+
+            else if (parts[0] == "EternalGoal")
+                _goals.Add(new EternalGoal(parts[1], parts[2], int.Parse(parts[3])));
+
+            else if (parts[0] == "ChecklistGoal")
+                _goals.Add(new ChecklistGoal(parts[1], parts[2], int.Parse(parts[3]),
+                    int.Parse(parts[4]), int.Parse(parts[5]), int.Parse(parts[6])));
         }
-
-        var lines = File.ReadAllLines(_filePath);
-        foreach (var line in lines)
-        {
-            var parts = line.Split(',');
-
-            Goal goal = null;
-
-            if (parts[0] == "Simple")
-            {
-                if (parts.Length != 4) continue; // Ensure correct format for Simple Goal
-                goal = new SimpleGoal(parts[1], parts[2], parts[3]);
-            }
-            else if (parts[0] == "Eternal")
-            {
-                if (parts.Length != 4) continue; // Ensure correct format for Eternal Goal
-                goal = new EternalGoal(parts[1], parts[2], parts[3]);
-            }
-            else if (parts[0] == "Checklist")
-            {
-                if (parts.Length != 6) continue; // Checklist Goal requires exactly 6 parts
-                goal = new ChecklistGoal(parts[1], parts[2], parts[3], int.Parse(parts[4]), int.Parse(parts[5]));
-            }
-
-            if (goal != null)
-            {
-                _goals.Add(goal);  // Add valid goals to the list
-            }
-        }
-
-        Console.WriteLine("Goals loaded successfully!");
     }
 }
