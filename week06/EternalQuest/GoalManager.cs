@@ -32,7 +32,7 @@ public class GoalManager
             Console.WriteLine("6. Load Goals");
             Console.WriteLine("7. Quit");
 
-            Console.Write("Select a choice: ");
+            Console.Write("Select a choice from the menu: ");
             int.TryParse(Console.ReadLine(), out choice);
 
             switch (choice)
@@ -52,9 +52,9 @@ public class GoalManager
     {
         int level = _score / 1000;
 
-        Console.WriteLine($"\n⭐ Score: {_score}");
-        Console.WriteLine($"🏆 Level: {level}");
-        Console.WriteLine($"🔥 Streak: {_streak}\n");
+        Console.WriteLine($"\n>> Score: {_score}");
+        Console.WriteLine($">> Level: {level}");
+        Console.WriteLine($">> Streak: {_streak}\n");
     }
 
     public void ListGoalNames()
@@ -78,15 +78,16 @@ public class GoalManager
         Console.WriteLine("2. Eternal Goal");
         Console.WriteLine("3. Checklist Goal");
 
+        Console.Write("Which type of goal would you like to create? >: ");
         int type = int.Parse(Console.ReadLine());
 
-        Console.Write("Name: ");
+        Console.Write("What is the name of your goal? >: ");
         string name = Console.ReadLine();
 
-        Console.Write("Description: ");
+        Console.Write("What is a short description of it? >: ");
         string desc = Console.ReadLine();
 
-        Console.Write("Points: ");
+        Console.Write("What is the amount of points associated with this goal? >: ");
         int points = int.Parse(Console.ReadLine());
 
         if (type == 1)
@@ -97,10 +98,10 @@ public class GoalManager
 
         else if (type == 3)
         {
-            Console.Write("Target: ");
+            Console.Write("What is the target for accomplishing it that many times? >: ");
             int target = int.Parse(Console.ReadLine());
 
-            Console.Write("Bonus: ");
+            Console.Write("How many times does this goal need to be accomplished for a bonus? >: ");
             int bonus = int.Parse(Console.ReadLine());
 
             _goals.Add(new ChecklistGoal(name, desc, points, target, bonus));
@@ -122,7 +123,7 @@ public class GoalManager
             // 🎮 STREAK BONUS
             if (_streak % 5 == 0)
             {
-                Console.WriteLine("🔥 STREAK BONUS! +100 points!");
+                Console.WriteLine(">>STREAK BONUS! +100 points!");
                 points += 100;
             }
         }
