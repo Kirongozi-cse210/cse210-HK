@@ -2,23 +2,28 @@ using System;
 
 public class EternalGoal : Goal
 {
-    public EternalGoal(string name, string desc, int points)
-        : base(name, desc, points) { }
+    private int _timesRecorded;
 
-    public override int RecordEvent()
+    public EternalGoal(string shortName, string description, string points) 
+        : base(shortName, description, points) { }
+
+    public override void RecordEvent()
     {
-        return _points;
+        _timesRecorded++;
     }
 
-    public override bool IsComplete() => false;
+    public override bool IsComplete()
+    {
+        return false;  // Eternal goals are never complete
+    }
 
     public override string GetDetailsString()
     {
-        return $"[∞] {_shortName} ({_description})";
+        return $"{_shortName}: {_description}, Points: {_points}, Times Recorded: {_timesRecorded}";
     }
 
     public override string GetStringRepresentation()
     {
-        return $"EternalGoal:{_shortName}|{_description}|{_points}";
+        return $"Eternal Goal: {_shortName}, {_points} points";
     }
 }

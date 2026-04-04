@@ -4,31 +4,26 @@ public class SimpleGoal : Goal
 {
     private bool _isComplete;
 
-    public SimpleGoal(string name, string desc, int points, bool isComplete = false)
-        : base(name, desc, points)
+    public SimpleGoal(string shortName, string description, string points) 
+        : base(shortName, description, points) { }
+
+    public override void RecordEvent()
     {
-        _isComplete = isComplete;
+        _isComplete = true;
     }
 
-    public override int RecordEvent()
+    public override bool IsComplete()
     {
-        if (!_isComplete)
-        {
-            _isComplete = true;
-            return _points;
-        }
-        return 0;
+        return _isComplete;
     }
-
-    public override bool IsComplete() => _isComplete;
 
     public override string GetDetailsString()
     {
-        return $"[{(_isComplete ? "X" : " ")}] {_shortName} ({_description})";
+        return $"{_shortName}: {_description}, Points: {_points}";
     }
 
     public override string GetStringRepresentation()
     {
-        return $"SimpleGoal:{_shortName}|{_description}|{_points}|{_isComplete}";
+        return $"Simple Goal: {_shortName}, {_points} points";
     }
 }
