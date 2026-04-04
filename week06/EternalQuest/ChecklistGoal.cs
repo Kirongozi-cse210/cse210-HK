@@ -31,7 +31,7 @@ public class ChecklistGoal : Goal
             if (_amountCompleted == _target)
             {
                 total += _bonus;
-                Console.WriteLine("🎉 Checklist BONUS achieved!");
+                Console.WriteLine(">> Checklist BONUS achieved!");
             }
 
             return total;
