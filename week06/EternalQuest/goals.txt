@@ -1,5 +1,5 @@
-3610
-29
+3760
+30
 SimpleGoal|Priyer |Chaque matin midi et soir|100|True
 ChecklistGoal|Conger|je vais voyager|60|2|2|20
 EternalGoal|Temple|En janvier 2027 je vais aller avec toute ma famille au Temple de Lubumbashi|90
@@ -8,3 +8,4 @@ EternalGoal|Ordanance de nos Ancentres|Je vais envoyer des nos au temple demain 
 ChecklistGoal|Enseigner |Le Dimanche au College des Anciens|100|20|20|200
 EternalGoal|Soiree Famiale|Chaque soiree j'aurai a faire le soiree famiale|100
 ChecklistGoal|Job|Everyday I'll going to look at a Job|50|2|2|200
+ChecklistGoal|Read|Read the Book of Mormon everyday early at 06:00 before going at work|50|1|2|200
