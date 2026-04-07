@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-// 🔹 Base Class
+
 abstract class Activity
 {
     private string _date;
