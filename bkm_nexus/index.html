@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Badges Professionnel</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles rapides pour la gestion à l'écran */
+        .badge-actions {
+            position: absolute;
+            top: -15px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+        .btn-badge-action {
+            width: 32px !important;
+            height: 32px !important;
+            padding: 0 !important;
+            border-radius: 50% !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .btn-edit-badge { background: #eab308; color: white; }
+        .btn-delete-badge { background: #ef4444; color: white; }
+        .editing-highlight { border: 2px dashed #eab308 !important; animation: pulse 1.5s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="language-selector no-print">
+        <button id="btn-lang">🌐 English</button>
+    </div>
+
+    <div class="main-wrapper">
+        
+        <div id="print-zone" class="print-zone-grid"></div>
+
+        <div class="control-panel no-print">
+            <h3 id="panel-title">⚙️ Ajouter un Personnel</h3>
+            
+            <form id="badge-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label id="label-name" for="input-name">Nom & Prénom :</label>
+                    <input type="text" id="input-name" placeholder="Ex: Benjamin Mazuya">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-role" for="input-role">Poste / Fonction :</label>
+                    <input type="text" id="input-role" placeholder="Ex: Chief Warehouse Manager">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-id" for="input-id">Numéro ID :</label>
+                    <input type="text" id="input-id" placeholder="Ex: #8492-DRC">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-text-color" for="input-text-color">Couleur du texte :</label>
+                    <input type="color" id="input-text-color" value="#1e293b">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-bg-color" for="input-bg-color">Couleur de fond (dégradé) :</label>
+                    <input type="color" id="input-bg-color" value="#e2e8f0">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-bg-image" for="input-bg-image">Ou Image de fond (Optionnel) :</label>
+                    <input type="file" id="input-bg-image" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-photo" for="input-photo">Photo de profil :</label>
+                    <input type="file" id="input-photo" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-status" for="input-status">Statut initial :</label>
+                    <select id="input-status">
+                        <option id="opt-online" value="online">Présent / Actif</option>
+                        <option id="opt-meeting" value="meeting">En Réunion</option>
+                        <option id="opt-offline" value="offline">Absent</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" id="btn-add" class="btn-primary">➕ Ajouter à la Planche</button>
+                    <button type="button" id="btn-clear" class="btn-secondary">🗑️ Vider la Planche</button>
+                    <button type="button" id="btn-print" class="btn-print-action">🖨️ Imprimer la Planche (A4)</button>
+                </div>
+            </form>
+            
+            <div class="badge-counter-info">
+                <span id="badge-count">0</span> badge(s) prêt(s) (Idéal: 6 à 8 par page A4)
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+:root {
+    --primary-color: #1e293b;
+    --accent-color: #3b82f6;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f8fafc;
+    padding: 20px;
+}
+
+.language-selector {
+    margin-bottom: 20px;
+    align-self: flex-end;
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#btn-lang {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#btn-lang:hover { background: white; color: var(--primary-color); }
+
+.main-wrapper {
+    display: flex;
+    gap: 40px;
+    max-width: 1200px;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.print-zone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    flex: 1;
+    min-width: 320px;
+}
+
+/* COMPOSANT DU BADGE */
+.badge-container {
+    width: 320px;
+    height: 480px;
+    perspective: 1000px;
+    page-break-inside: avoid;
+}
+
+.badge-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.badge-card.flipped { transform: rotateY(180deg); }
+
+.badge-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #cbd5e1;
+    background: var(--card-bg);
+    background-size: cover !important; /* Gère l'arrière-plan d'image proprement */
+    background-position: center !important;
+}
+
+/* RECTO */
+.badge-front { color: #1e293b; }
+
+.badge-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 8px;
+}
+
+/* SÉLECTION LOGO AGRANDI */
+.company-logo {
+    background: var(--primary-color);
+    width: 42px; /* Agrandi de 32px à 42px */
+    height: 42px; /* Agrandi de 32px à 42px */
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.company-logo .logo-icon {
+    font-size: 1.4rem; /* Icône plus grande et visible */
+}
+
+.badge-header h2 {
+    font-size: 1.25rem; /* Titre plus visible */
+    color: var(--primary-color);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.rfid-chip {
+    width: 45px;
+    height: 32px;
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    border-radius: 6px;
+    align-self: flex-start;
+    margin-top: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.profile-photo {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--accent-color);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    background: #f1f5f9;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.badge-details {
+    text-align: center;
+    width: 100%;
+}
+
+.badge-details h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.badge-details p {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.badge-details .badge-id {
+    font-size: 0.85rem;
+    font-family: monospace;
+    margin-top: 8px;
+    background: rgba(0,0,0,0.06);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.status-indicator-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid #e2e8f0;
+}
+
+.status-dot { width: 10px; height: 10px; border-radius: 50%; }
+.status-dot.online { background: var(--success-color); }
+.status-dot.meeting { background: var(--warning-color); }
+.status-dot.offline { background: var(--danger-color); }
+
+/* VERSO */
+.badge-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    color: #f8fafc;
+    text-align: center;
+    border: 1px solid #334155;
+}
+
+.badge-header-back h3 {
+    font-size: 0.85rem;
+    color: #f87171;
+    border: 1px solid #ef4444;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+}
+
+.badge-back-content { width: 100%; padding: 0 10px; }
+.badge-back-content p { font-size: 0.85rem; color: #94a3b8; line-height: 1.4; }
+.barcode-zone { background: white; padding: 12px; border-radius: 8px; color: black; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.barcode-lines { font-family: monospace; font-size: 1.6rem; letter-spacing: -1px; font-weight: bold; }
+.barcode-zone small { display: block; font-family: monospace; margin-top: 4px; letter-spacing: 1px; color: #475569; }
+.badge-footer-back { display: flex; flex-direction: column; gap: 6px; width: 100%; align-items: center; }
+.badge-footer-back small { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+.copyright-notice { font-size: 0.7rem; color: #475569; margin-top: 2px; border-top: 1px solid #334155; width: 100%; padding-top: 6px; }
+
+/* PANNEAU DE CONTRÔLE */
+.control-panel {
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 16px;
+    width: 360px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.control-panel h3 { margin-bottom: 18px; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-weight: 600; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 500; }
+.form-group input, .form-group select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 0.9rem; }
+.form-group input[type="color"] { padding: 2px; height: 40px; cursor: pointer; background: transparent; }
+
+.button-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: transform 0.1s ease, filter 0.2s ease; }
+button:active { transform: scale(0.98); }
+
+.btn-primary { background: var(--accent-color); color: white; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: #334155; color: #f8fafc; }
+.btn-secondary:hover { background: #475569; }
+.btn-print-action { background: var(--success-color); color: white; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+.btn-print-action:hover { filter: brightness(1.1); }
+.badge-counter-info { margin-top: 15px; font-size: 0.8rem; color: #94a3b8; text-align: center; background: rgba(0, 0, 0, 0.2); padding: 6px; border-radius: 6px; }
+.badge-counter-info span { font-weight: bold; color: var(--success-color); }
+
+/* IMPRESSION A4 */
+@media print {
+    body { background: white !important; color: black !important; padding: 0; margin: 0; }
+    .no-print, .control-panel, .language-selector { display: none !important; }
+    .main-wrapper { width: 100% !important; max-width: 100% !important; padding: 0; margin: 0; }
+    .print-zone-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; max-width: 100% !important; width: 100% !important; background: transparent; }
+    .badge-face { border: 1px solid #94a3b8 !important; box-shadow: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
