@@ -76,6 +76,7 @@ const labelStatus = document.getElementById('label-status');
 const btnAdd = document.getElementById('btn-add');
 const btnClear = document.getElementById('btn-clear');
 const btnPrint = document.getElementById('btn-print');
+const btnExportWord = document.getElementById('btn-export-word');
 const badgeCountEl = document.getElementById('badge-count');
 
 const inputName = document.getElementById('input-name');
@@ -89,7 +90,7 @@ const inputPhoto = document.getElementById('input-photo');
 const printZone = document.getElementById('print-zone');
 
 // ==========================================
-// FONCTIONS DE SAUVEGARDE (LOCALSTORAGE)
+// FONCTIONS DE PERSISTANCE (LOCALSTORAGE)
 // ==========================================
 function sauvegarderDansLeNavigateur() {
     localStorage.setItem('sauvegardePlanchePersonnel', JSON.stringify(listPersonnel));
@@ -199,7 +200,7 @@ if(btnAdd) {
             listPersonnel.push(nouvelAgent);
         }
         
-        // PERSISTANCE : On sauvegarde la liste mise à jour
+        // Sauvegarde de l'état actuel
         sauvegarderDansLeNavigateur();
 
         // Réinitialisation du formulaire complet
@@ -237,7 +238,6 @@ window.supprimerBadge = function(idUnique) {
     listPersonnel = listPersonnel.filter(agent => agent.idUnique !== idUnique);
     if(idEnCoursDeModification === idUnique) idEnCoursDeModification = null;
     
-    // PERSISTANCE : Mise à jour après suppression
     sauvegarderDansLeNavigateur();
     updateLanguage();
 };
@@ -247,14 +247,13 @@ if(btnClear) {
         if(confirm("Voulez-vous vraiment vider toute la planche ?")) {
             listPersonnel = [];
             idEnCoursDeModification = null;
-            
-            // PERSISTANCE : On efface aussi le stockage local
             localStorage.removeItem('sauvegardePlanchePersonnel');
             updateLanguage();
         }
     });
 }
 
+// AFICHAGE ÉCRAN (54mm x 86mm)
 function renderBadges() {
     printZone.innerHTML = "";
     if (badgeCountEl) badgeCountEl.textContent = listPersonnel.length;
@@ -331,6 +330,106 @@ if(btnPrint) {
     btnPrint.addEventListener('click', () => { window.print(); });
 }
 
-// INITIALISATION SYNC : Charger les anciennes données avant le premier affichage
+// ====================================================
+// MODULE COMPATIBILITÉ MICROSOFT WORD (RECTO-VERSO LOGIC)
+// ====================================================
+if(btnExportWord) {
+    btnExportWord.addEventListener('click', exportToWordRectoVerso);
+}
+
+function exportToWordRectoVerso() {
+    if (listPersonnel.length === 0) {
+        alert("Votre planche est vide. Ajoutez du personnel avant d'exporter.");
+        return;
+    }
+
+    const data = translations[currentLang];
+
+    let wordHTML = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+        <title>Planche de Badges Recto-Verso</title>
+        <style>
+            @page {
+                size: 21cm 29.7cm;
+                margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+            }
+            body { font-family: 'Segoe UI', Arial, sans-serif; }
+            .word-badge-table { border-collapse: collapse; margin: 0 auto; }
+            .badge-cell {
+                width: 54mm; height: 86mm; max-width: 54mm; max-height: 86mm;
+                border: 0.5pt solid #64748b; padding: 12px; vertical-align: top; overflow: hidden;
+            }
+            .page-break { page-break-before: always; clear: both; }
+        </style>
+    </head>
+    <body>
+    `;
+
+    // PAGE 1 : LES RECTOS
+    wordHTML += `<h2>PAGE 1 : RECTOS</h2>`;
+    wordHTML += `<table class="word-badge-table"><tr>`;
+    
+    listPersonnel.forEach((agent, index) => {
+        if (index > 0 && index % 3 === 0) { wordHTML += `</tr><tr>`; }
+
+        let styleBg = `background-color: ${agent.couleurFond};`;
+        if (agent.bgImage) { styleBg = `background-image: url('${agent.bgImage}'); background-size: cover;`; }
+
+        wordHTML += `
+            <td class="badge-cell" style="${styleBg} color: ${agent.couleurTexte};">
+                <div style="text-align:center; font-weight:bold; font-size:10pt; border-bottom:1px solid ${agent.couleurTexte}; padding-bottom:3px; margin-bottom:6px;">🔒 SMART SECURITY</div>
+                <div style="text-align:center; margin-bottom:6px;">
+                    <img src="${agent.photo}" style="width:65px; height:65px; border-radius:50%; border:2px solid ${agent.couleurTexte};" />
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:11pt; font-weight:bold; margin-bottom:2px;">${agent.nom}</div>
+                    <div style="font-size:9pt; opacity:0.8; margin-bottom:4px;">${agent.poste}</div>
+                    <div style="font-size:8pt; font-family:monospace; background:rgba(0,0,0,0.06); display:inline-block; padding:1px 4px;">ID: ${agent.idCard}</div>
+                </div>
+            </td>
+        `;
+    });
+    wordHTML += `</tr></table>`;
+
+    // PAGE 2 : LES VERSOS (Inversement mathématique des colonnes)
+    wordHTML += `<div class="page-break"></div>`;
+    wordHTML += `<h2>PAGE 2 : VERSOS</h2>`;
+    wordHTML += `<table class="word-badge-table"><tr>`;
+
+    for (let i = 0; i < listPersonnel.length; i += 3) {
+        let rowAgents = listPersonnel.slice(i, i + 3);
+        rowAgents.reverse(); // Aligne le dos sur le devant après rotation physique du papier
+
+        rowAgents.forEach((agent) => {
+            wordHTML += `
+                <td class="badge-cell" style="background: #1e293b; color: #f8fafc; text-align: center;">
+                    <div style="font-size: 8pt; color: #f87171; border: 1px solid #ef4444; padding: 2px; font-weight: bold; margin-bottom: 12px;">${data.textProperty}</div>
+                    <p style="font-size: 8pt; color: #94a3b8; line-height: 1.3; margin-bottom: 20px;">${data.textInstructions}</p>
+                    <div style="background: white; padding: 5px; color: black; margin-bottom: 10px;">
+                        <div style="font-family: monospace; font-size: 11pt; letter-spacing: -0.5px; font-weight: bold;">||||| ||| |||| || |||| |||</div>
+                        <small style="font-size: 7pt; font-family: monospace;">${agent.serial}</small>
+                    </div>
+                </td>
+            `;
+        });
+        if (i + 3 < listPersonnel.length) { wordHTML += `</tr><tr>`; }
+    }
+
+    wordHTML += `</tr></table></body></html>`;
+
+    // Téléchargement immédiat
+    const blob = new Blob(['\ufeff' + wordHTML], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `planche_badges_word_${Date.now()}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Chargement initial au boot
 chargerDepuisLeNavigateur();
 updateLanguage();

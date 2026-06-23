@@ -1,11 +1,17 @@
+/* ==========================================================================
+   1. VARIABLES GLOBALES & CONFIGURATION DE BASE
+   ========================================================================== */
 :root {
-    --primary-color: #1e293b;
-    --accent-color: #3b82f6;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
+    --bg-main: #0f172a;
+    --bg-panel: #1e293b;
+    --text-light: #f8fafc;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
     --danger-color: #ef4444;
-    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --card-bg: rgba(255, 255, 255, 0.95);
+    --danger-hover: #dc2626;
+    --gray-border: #cbd5e1;
+    --badge-width: 54mm;
+    --badge-height: 86mm;
 }
 
 * {
@@ -16,152 +22,305 @@
 }
 
 body {
-    min-height: 100vh;
-    background: var(--bg-gradient);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #f8fafc;
+    background-color: #f1f5f9;
+    color: #1e293b;
     padding: 20px;
+    min-height: 100vh;
 }
 
+/* ==========================================================================
+   2. STRUCTURE & MISE EN PAGE INTERFACE (WRAPPER)
+   ========================================================================== */
+.main-wrapper {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+/* Bouton et sélecteur de langue */
 .language-selector {
-    margin-bottom: 20px;
-    align-self: flex-end;
-    max-width: 1200px;
-    width: 100%;
     display: flex;
     justify-content: flex-end;
+    max-width: 1400px;
+    margin: 0 auto 15px auto;
 }
 
 #btn-lang {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 6px 12px;
-    border-radius: 20px;
+    background: var(--bg-panel);
+    color: var(--text-light);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: background 0.3s ease, color 0.3s ease;
+    font-size: 14px;
+    transition: background 0.2s;
 }
 
-#btn-lang:hover { background: white; color: var(--primary-color); }
+#btn-lang:hover {
+    background: #334155;
+}
 
-.main-wrapper {
-    display: flex;
-    gap: 40px;
-    max-width: 1200px;
+/* ==========================================================================
+   3. PANNEAU DE CONTRÔLE (FORMULAIRE LATÉRAL)
+   ========================================================================== */
+.control-panel {
+    background-color: var(--bg-panel);
+    color: var(--text-light);
+    width: 350px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.control-panel h3 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.form-group input[type="text"],
+.form-group input[type="color"],
+.form-group select,
+.form-group input[type="file"] {
     width: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #334155;
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    font-size: 14px;
 }
 
+.form-group input[type="color"] {
+    height: 40px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.button-group button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: #475569;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #334155;
+}
+
+.btn-print-action {
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-print-action:hover {
+    background-color: #059669;
+}
+
+.badge-counter-info {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.badge-counter-info span {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+/* ==========================================================================
+   4. GRILLE DE LA PLANCHE DE BADGES (ZONE D'AFFICHAGE ÉCRAN)
+   ========================================================================== */
 .print-zone-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(54mm, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(60mm, 1fr));
     gap: 25px;
-    flex: 1;
-    min-width: 54mm;
+    flex-grow: 1;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    min-height: 500px;
 }
 
-/* COMPOSANT DU BADGE - FORMAT CR80 VERTICAL (54mm x 86mm) */
-.badge-container {
-    width: 54mm;
-    height: 86mm;
-    perspective: 1000px;
+/* ==========================================================================
+   5. BOUTONS DE GESTION (MODIFIER / SUPPRIMER - STYLES CORRIGÉS)
+   ========================================================================== */
+.badge-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 6px;
+    width: var(--badge-width);
+    box-sizing: border-box;
+}
+
+.btn-badge-action {
+    background-color: #f1f5f9 !important;
+    border: 1px solid var(--gray-border) !important;
+    color: #1e293b !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    padding: 5px 9px !important;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn-edit-badge:hover {
+    background-color: #e0f2fe !important;
+    border-color: #7dd3fc !important;
+    transform: translateY(-1px);
+}
+
+.btn-delete-badge:hover {
+    background-color: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    transform: translateY(-1px);
+}
+
+.badge-actions button {
     position: relative;
+    z-index: 10;
+}
+
+/* Surlignage lors d'une modification en cours */
+.editing-highlight {
+    outline: 3px dashed var(--primary-color) !important;
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   6. ARCHITECTURE DU BADGE CR80 (54mm x 86mm RETOURNEMENT 3D)
+   ========================================================================== */
+.badge-container {
+    width: var(--badge-width);
+    margin: 0 auto;
+    perspective: 1000px;
 }
 
 .badge-card {
-    width: 100%;
-    height: 100%;
+    width: var(--badge-width);
+    height: var(--badge-height);
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    border-radius: 3.18mm; /* Arrondi standard PVC */
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border-radius: 10px;
 }
 
-.badge-card.flipped { transform: rotateY(180deg); }
+.badge-card.flipped {
+    transform: rotateY(180deg);
+}
 
 .badge-face {
     position: absolute;
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    border-radius: 3.18mm;
-    padding: 14px;
+    border-radius: 10px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between; /* Aligne proprement haut, milieu et bas */
-    border: 1px solid #cbd5e1;
-    background-color: var(--card-bg);
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+    justify-content: space-between;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* RECTO */
-.badge-front { color: #1e293b; }
+/* ----------------------------------
+   RECTO DU BADGE (AGRANDI & LISIBLE)
+   ---------------------------------- */
+.badge-front {
+    background: linear-gradient(145deg, #ffffff, #e2e8f0);
+}
 
 .badge-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 100%;
-    border-bottom: 1.5px solid var(--accent-color);
-    padding-bottom: 6px;
+    border-bottom: 2px solid;
+    padding-bottom: 5px;
 }
 
 .company-logo {
-    background: var(--primary-color);
-    width: 26px;
-    height: 26px;
-    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    flex-shrink: 0;
+    justify-content: center;
 }
 
-.company-logo .logo-icon {
-    font-size: 0.9rem;
+.logo-icon {
+    font-size: 12px;
 }
 
 .badge-header h2 {
-    font-size: 0.85rem;
-    color: var(--primary-color);
+    font-size: 12px; /* Titre haut légèrement agrandi */
+    letter-spacing: 1px;
     font-weight: 800;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .rfid-chip {
     width: 28px;
-    height: 20px;
+    height: 22px;
     background: linear-gradient(135deg, #eab308, #ca8a04);
     border-radius: 4px;
-    align-self: flex-start;
-    margin-top: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 3px;
+    position: relative;
+    border: 0.5px solid rgba(0,0,0,0.1);
 }
 
-/* Photo centrée et adaptée à la hauteur verticale */
+/* Photo de profil agrandie (Passage à 82px) */
 .profile-photo {
-    width: 75px;
-    height: 75px;
+    width: 82px !important;
+    height: 82px !important;
     border-radius: 50%;
+    border: 2.5px solid;
+    margin: 5px auto !important;
     overflow: hidden;
-    border: 3px solid var(--accent-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-    background: #f1f5f9;
-    margin: 4px 0;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .profile-photo img {
@@ -172,29 +331,32 @@ body {
 
 .badge-details {
     text-align: center;
-    width: 100%;
 }
 
+/* Nom d'écriture plus grand (Passage à 16px) */
 .badge-details h1 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 2px;
-    word-break: break-word;
-    line-height: 1.2;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    margin-bottom: 2px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+/* Poste/Fonction plus grand (Passage à 12px) */
 .badge-details p {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #475569;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px;
 }
 
-.badge-details .badge-id {
-    font-size: 0.65rem;
+/* ID plus grand (Passage à 10.5px) */
+.badge-id {
     font-family: monospace;
-    margin-top: 4px;
-    background: rgba(0,0,0,0.06);
-    padding: 1px 6px;
+    font-size: 10.5px !important;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 8px !important;
     border-radius: 3px;
     display: inline-block;
 }
@@ -202,158 +364,162 @@ body {
 .status-indicator-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
-    background: #f1f5f9;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    padding: 3px;
+    border-radius: 5px;
+    border: 0.5px solid #e2e8f0;
 }
 
-.status-dot { width: 6px; height: 6px; border-radius: 50%; }
-.status-dot.online { background: var(--success-color); }
-.status-dot.meeting { background: var(--warning-color); }
-.status-dot.offline { background: var(--danger-color); }
+.status-indicator-container span {
+    font-size: 8px;
+    font-weight: 700;
+    color: #1e293b;
+}
 
-/* VERSO VERTICAL */
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.online { background-color: #22c55e; }
+.status-dot.meeting { background-color: #eab308; }
+.status-dot.offline { background-color: #ef4444; }
+
+/* ----------------------------------
+   VERSO DU BADGE
+   ---------------------------------- */
 .badge-back {
-    transform: rotateY(180deg);
     background: linear-gradient(145deg, #1e293b, #0f172a);
     color: #f8fafc;
+    transform: rotateY(180deg);
+}
+
+.badge-header-back {
     text-align: center;
-    border: 1px solid #334155;
+    border-bottom: 1px dashed #334155;
+    padding-bottom: 4px;
 }
 
 .badge-header-back h3 {
-    font-size: 0.65rem;
+    font-size: 9px;
     color: #f87171;
-    border: 1px solid #ef4444;
-    padding: 2px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
-.badge-back-content { width: 100%; padding: 0 2px; }
-.badge-back-content p { font-size: 0.65rem; color: #94a3b8; line-height: 1.3; }
+.badge-back-content {
+    margin: 10px 0;
+    text-align: center;
+}
 
-.barcode-zone { 
-    background: white; 
-    padding: 6px; 
-    border-radius: 6px; 
-    color: black; 
-    margin-top: 8px; 
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2); 
+.badge-back-content p {
+    font-size: 7.5px;
+    color: #94a3b8;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+
+.barcode-zone {
+    background: white;
+    padding: 5px;
+    border-radius: 4px;
+    color: black;
+    display: inline-block;
     width: 100%;
 }
-.barcode-lines { font-family: monospace; font-size: 1.1rem; letter-spacing: -0.5px; font-weight: bold; }
-.barcode-zone small { display: block; font-family: monospace; margin-top: 1px; font-size: 0.55rem; letter-spacing: 1px; color: #475569; }
 
-.badge-footer-back { display: flex; flex-direction: column; gap: 4px; width: 100%; align-items: center; }
-.badge-footer-back small { font-size: 0.55rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-.copyright-notice { font-size: 0.55rem; color: #475569; margin-top: 1px; border-top: 1px solid #334155; width: 100%; padding-top: 4px; }
-
-/* PANNEAU DE CONTRÔLE */
-.control-panel {
-    background: rgba(30, 41, 59, 0.85);
-    backdrop-filter: blur(10px);
-    padding: 25px;
-    border-radius: 16px;
-    width: 360px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+.barcode-lines {
+    font-family: monospace;
+    font-size: 13px;
+    letter-spacing: -0.5px;
+    font-weight: bold;
+    line-height: 1;
 }
 
-.control-panel h3 { margin-bottom: 18px; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-weight: 600; }
-.form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 500; }
-.form-group input, .form-group select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 0.9rem; }
-.form-group input[type="color"] { padding: 2px; height: 40px; cursor: pointer; background: transparent; }
+.barcode-zone small {
+    font-size: 7px;
+    display: block;
+    margin-top: 2px;
+    font-family: monospace;
+    color: #475569;
+}
 
-.button-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: transform 0.1s ease, filter 0.2s ease; }
-button:active { transform: scale(0.98); }
+.badge-footer-back {
+    text-align: center;
+    border-top: 1px solid #334155;
+    padding-top: 4px;
+}
 
-.btn-primary { background: var(--accent-color); color: white; }
-.btn-primary:hover { filter: brightness(1.1); }
-.btn-secondary { background: #334155; color: #f8fafc; }
-.btn-secondary:hover { background: #475569; }
-.btn-print-action { background: var(--success-color); color: white; font-size: 1rem; margin-top: 5px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-.btn-print-action:hover { filter: brightness(1.1); }
-.badge-counter-info { margin-top: 15px; font-size: 0.8rem; color: #94a3b8; text-align: center; background: rgba(0, 0, 0, 0.2); padding: 6px; border-radius: 6px; }
-.badge-counter-info span { font-weight: bold; color: var(--success-color); }
+.badge-footer-back small {
+    font-size: 7px;
+    color: #64748b;
+    text-transform: uppercase;
+}
 
-/* CONFIGURATION PARAMÈTRES D'IMPRESSION PRO CR80 VERTICAL SUR A4 */
+.copyright-notice {
+    font-size: 5.5px;
+    color: #475569;
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   7. IMPULSION STRICTE POUR L'IMPRESSION SYSTÈME (A4 PRINT)
+   ========================================================================== */
 @media print {
-    @page {
-        size: A4 portrait;
-        margin: 20mm 0mm;
+    .no-print, 
+    .control-panel, 
+    .language-selector, 
+    .badge-actions, 
+    .btn-badge-action {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
-    
-    body { 
-        background: white !important; 
-        color: black !important; 
-        padding: 0; 
-        margin: 0; 
-        min-height: auto; 
+
+    body {
+        background-color: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
-    
-    .no-print, .control-panel, .language-selector, .badge-actions { 
-        display: none !important; 
+
+    .main-wrapper {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
     }
-    
-    .main-wrapper, .print-zone-grid { 
-        display: block !important; 
-        width: 100% !important; 
-        max-width: 100% !important;
-        padding: 0;
-        margin: 0;
+
+    .print-zone-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, var(--badge-width)) !important;
+        gap: 15mm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
     }
-    
-    /* Centre le badge vertical au milieu de la feuille */
+
     .badge-container {
         page-break-inside: avoid;
-        break-inside: avoid;
-        width: 54mm !important;
-        height: 86mm !important;
-        margin: 0 auto !important;
-        perspective: none !important;
-        position: relative;
+        margin: 0 !important;
     }
-    
+
     .badge-card {
-        transform: none !important;
         box-shadow: none !important;
-        width: 100% !important;
-        height: 100% !important;
+        border: 0.2px solid rgba(0,0,0,0.15) !important;
     }
-    
-    .badge-card.flipped { 
-        transform: none !important; 
-    }
-    
-    .badge-face {
-        position: relative !important;
-        width: 54mm !important;
-        height: 86mm !important;
-        backface-visibility: visible !important;
-        border: 0.2mm solid #64748b !important; /* Ligne fine pour une découpe au millimètre */
-        box-shadow: none !important;
-        border-radius: 3.18mm !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    
-    .badge-front {
-        margin-bottom: 0;
-    }
-    
-    /* Le verso vertical est envoyé sur la page 2 pour correspondre parfaitement au dos */
-    .badge-back {
-        transform: rotateY(0deg) !important;
-        background: #1e293b !important;
-        color: #f8fafc !important;
-        page-break-before: always !important;
-        break-before: page !important;
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
+    
