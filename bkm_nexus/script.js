@@ -16,6 +16,7 @@ const translations = {
         labelBgColor: "Couleur de fond (dégradé) :",
         labelBgImage: "Ou Image de fond (Optionnel) :",
         labelPhoto: "Photo de profil :",
+        labelLogo: "Logo de l'entreprise (Optionnel) :",
         labelStatus: "Statut initial :",
         optOnline: "Présent / Actif",
         optMeeting: "En Réunion",
@@ -43,6 +44,7 @@ const translations = {
         labelBgColor: "Badge Color:",
         labelBgImage: "Or Background Image (Optional):",
         labelPhoto: "Profile Photo:",
+        labelLogo: "Company Logo (Optional):",
         labelStatus: "Initial Status:",
         optOnline: "Present / Active",
         optMeeting: "In a Meeting",
@@ -60,6 +62,7 @@ let listPersonnel = [];
 const defaultPhoto = "https://via.placeholder.com/150";
 let tempPhotoData = defaultPhoto; 
 let tempBgImageData = null; 
+let tempLogoData = null; 
 let idEnCoursDeModification = null; 
 
 // Éléments du DOM
@@ -72,6 +75,7 @@ const labelTextColor = document.getElementById('label-text-color');
 const labelBgColor = document.getElementById('label-bg-color');
 const labelBgImage = document.getElementById('label-bg-image');
 const labelPhoto = document.getElementById('label-photo');
+const labelLogo = document.getElementById('label-logo'); 
 const labelStatus = document.getElementById('label-status');
 const btnAdd = document.getElementById('btn-add');
 const btnClear = document.getElementById('btn-clear');
@@ -85,11 +89,11 @@ const inputId = document.getElementById('input-id');
 const inputTextColor = document.getElementById('input-text-color');
 const inputBgColor = document.getElementById('input-bg-color');
 const inputBgImage = document.getElementById('input-bg-image');
+const inputLogo = document.getElementById('input-logo'); 
 const inputStatus = document.getElementById('input-status');
 const inputPhoto = document.getElementById('input-photo');
 const printZone = document.getElementById('print-zone');
 
-// Appliquer directement le libellé personnalisé sur le bouton Word
 if(btnExportWord) {
     btnExportWord.textContent = "🖨️ Imprimer les Versos (Word)";
 }
@@ -118,6 +122,7 @@ function updateLanguage() {
     if(labelBgColor) labelBgColor.textContent = data.labelBgColor;
     if(labelBgImage) labelBgImage.textContent = data.labelBgImage;
     if(labelPhoto) labelPhoto.textContent = data.labelPhoto;
+    if(labelLogo) labelLogo.textContent = data.labelLogo; 
     if(labelStatus) labelStatus.textContent = data.labelStatus;
     if(btnClear) btnClear.textContent = data.btnClear;
     if(btnPrint) btnPrint.textContent = data.btnPrint;
@@ -136,7 +141,6 @@ if(btnLang) {
     btnLang.addEventListener('click', () => {
         currentLang = (currentLang === 'fr') ? 'en' : 'fr';
         updateLanguage();
-        // Conserver le texte personnalisé après changement de langue
         if(btnExportWord) {
             btnExportWord.textContent = currentLang === 'fr' ? "🖨️ Imprimer les Versos (Word)" : "🖨️ Print Backs (Word)";
         }
@@ -165,6 +169,17 @@ if(inputBgImage) {
     });
 }
 
+if(inputLogo) {
+    inputLogo.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) { tempLogoData = event.target.result; };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
 if(btnAdd) {
     btnAdd.addEventListener('click', () => {
         if(!inputName.value.trim() || !inputRole.value.trim()) {
@@ -187,6 +202,7 @@ if(btnAdd) {
                 
                 if(tempPhotoData !== defaultPhoto) listPersonnel[index].photo = tempPhotoData;
                 if(tempBgImageData !== null) listPersonnel[index].bgImage = tempBgImageData;
+                if(tempLogoData !== null) listPersonnel[index].logo = tempLogoData;
             }
             idEnCoursDeModification = null;
         } else {
@@ -200,6 +216,7 @@ if(btnAdd) {
                 couleurFond: inputBgColor.value,
                 bgImage: tempBgImageData,
                 photo: tempPhotoData,
+                logo: tempLogoData, 
                 statut: inputStatus.value
             };
             listPersonnel.push(nouvelAgent);
@@ -212,8 +229,10 @@ if(btnAdd) {
         inputId.value = "";
         inputPhoto.value = "";
         inputBgImage.value = "";
+        if(inputLogo) inputLogo.value = "";
         tempPhotoData = defaultPhoto;
         tempBgImageData = null;
+        tempLogoData = null;
 
         updateLanguage();
     });
@@ -233,6 +252,7 @@ window.preparerModification = function(idUnique) {
     
     tempPhotoData = agent.photo;
     tempBgImageData = agent.bgImage;
+    tempLogoData = agent.logo || null;
 
     updateLanguage();
 };
@@ -274,6 +294,15 @@ function renderBadges() {
             styleBackground = `background-image: url('${agent.bgImage}') !important; background-size: cover;`;
         }
 
+        let logoHTML = '';
+        if (agent.logo) {
+            logoHTML = `
+                <div style="text-align: center; margin-bottom: 5px;">
+                    <img src="${agent.logo}" style="max-height: 25px; max-width: 120px; object-fit: contain;" />
+                </div>
+            `;
+        }
+
         const badgeHTML = `
             <div class="badge-container">
                 <div class="badge-actions no-print">
@@ -288,11 +317,12 @@ function renderBadges() {
                             <img src="${agent.photo}" alt="Profile">
                         </div>
                         
-                        <div class="badge-header" style="border-bottom-color: ${agent.couleurTexte} !important; height: 5px; margin-bottom: 12px;"></div>
+                        ${logoHTML}
+                        <div class="badge-header" style="border-bottom-color: ${agent.couleurTexte} !important; height: 2px; margin-bottom: 12px; margin-top: 2px;"></div>
                         
                         <div class="rfid-chip"></div>
                         <div class="badge-details">
-                            <h1 style="color: ${agent.couleurTexte} !important;">${agent.nom}</h1>
+                            <h1 style="color: ${agent.couleurTexte} !important; font-weight: 500 !important;">${agent.nom}</h1>
                             <p style="color: ${agent.couleurTexte} !important; opacity: 0.9;">${agent.poste}</p>
                             <p class="badge-id" style="color: ${agent.couleurTexte} !important;">ID: ${agent.idCard}</p>
                         </div>
@@ -329,7 +359,7 @@ function renderBadges() {
                         </div>
                         <div class="badge-footer-back">
                             <small>${data.textScanVerify}</small>
-                            <div class="copyright-notice">© Copyright 2026 par Benjamin K. Mazuya</div>
+                            <div class="copyright-notice">© 2026 par Benjamin K. Mazuya</div>
                         </div>
                     </div>
 
@@ -345,7 +375,7 @@ if(btnPrint) {
 }
 
 // ====================================================
-// MODULE MICROSOFT WORD RECTO-VERSO NETTOYÉ
+// MODULE MICROSOFT WORD RECTO-VERSO NETTOYÉ AVEC LOGO
 // ====================================================
 if(btnExportWord) {
     btnExportWord.addEventListener('click', exportToWordRectoVerso);
@@ -390,16 +420,24 @@ function exportToWordRectoVerso() {
         let styleBg = `background-color: ${agent.couleurFond};`;
         if (agent.bgImage) { styleBg = `background-image: url('${agent.bgImage}'); background-size: cover;`; }
 
+        let wordLogoHTML = '';
+        if (agent.logo) {
+            wordLogoHTML = `<div style="text-align:center; margin-bottom:4px;"><img src="${agent.logo}" style="height:22px; max-width:110px;" /></div>`;
+        } else {
+            wordLogoHTML = `<div style="height:10px;"></div>`;
+        }
+
         wordHTML += `
             <td class="badge-cell" style="${styleBg} color: ${agent.couleurTexte};">
                 <div style="text-align:center; margin-bottom:12px; margin-top:5px;">
                     <img src="${agent.photo}" style="width:70px; height:70px; border-radius:50%; border:2px solid ${agent.couleurTexte};" />
                 </div>
                 
+                ${wordLogoHTML}
                 <div style="border-bottom:1px solid ${agent.couleurTexte}; margin-bottom:15px; height:2px;"></div>
                 
                 <div style="text-align:center;">
-                    <div style="font-size:12pt; font-weight:800; margin-bottom:2px;">${agent.nom}</div>
+                    <div style="font-size:12pt; font-weight:normal; margin-bottom:2px;">${agent.nom}</div>
                     <div style="font-size:9.5pt; font-weight:600; opacity:0.8; margin-bottom:8px;">${agent.poste}</div>
                     <div style="font-size:8.5pt; font-family:monospace; background:rgba(0,0,0,0.06); display:inline-block; padding:2px 6px; border-radius:3px;">ID: ${agent.idCard}</div>
                 </div>
@@ -443,7 +481,7 @@ function exportToWordRectoVerso() {
                     </div>
 
                     <div style="font-size: 7.5pt; color: #64748b; margin-top: 20px;">${data.textScanVerify}</div>
-                    <div style="font-size: 6.5pt; color: #475569; margin-top: 8px;">© 2026 Smart Security</div>
+                    <div style="font-size: 6.5pt; color: #475569; margin-top: 8px;">© 2026 par Benjamin K. Mazuya</div>
                 </td>
             `;
         });
@@ -456,7 +494,7 @@ function exportToWordRectoVerso() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `planche_badges_clean_${Date.now()}.doc`;
+    a.download = `planche_badges_logo_${Date.now()}.doc`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
