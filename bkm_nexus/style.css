@@ -39,7 +39,6 @@ body {
     align-items: flex-start;
 }
 
-/* Bouton et sélecteur de langue */
 .language-selector {
     display: flex;
     justify-content: flex-end;
@@ -180,7 +179,7 @@ body {
 }
 
 /* ==========================================================================
-   5. BOUTONS DE GESTION (MODIFIER / SUPPRIMER - STYLES CORRIGÉS)
+   5. BOUTONS DE GESTION (MODIFIER / SUPPRIMER)
    ========================================================================== */
 .badge-actions {
     display: flex;
@@ -223,14 +222,13 @@ body {
     z-index: 10;
 }
 
-/* Surlignage lors d'une modification en cours */
 .editing-highlight {
     outline: 3px dashed var(--primary-color) !important;
     outline-offset: 2px;
 }
 
 /* ==========================================================================
-   6. ARCHITECTURE DU BADGE CR80 (54mm x 86mm RETOURNEMENT 3D)
+   6. ARCHITECTURE DU BADGE CR80 (STRUCTURE FLIPPED ET PHOTO EN HAUT)
    ========================================================================== */
 .badge-container {
     width: var(--badge-width);
@@ -262,65 +260,27 @@ body {
     padding: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* ----------------------------------
-   RECTO DU BADGE (AGRANDI & LISIBLE)
-   ---------------------------------- */
+/* --- RECTO DU BADGE (PHOTO PROULSÉE EN HAUT) --- */
 .badge-front {
     background: linear-gradient(145deg, #ffffff, #e2e8f0);
+    justify-content: flex-start; /* Aligne le contenu vers le haut */
 }
 
-.badge-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 2px solid;
-    padding-bottom: 5px;
-}
-
-.company-logo {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.logo-icon {
-    font-size: 12px;
-}
-
-.badge-header h2 {
-    font-size: 12px; /* Titre haut légèrement agrandi */
-    letter-spacing: 1px;
-    font-weight: 800;
-}
-
-.rfid-chip {
-    width: 28px;
-    height: 22px;
-    background: linear-gradient(135deg, #eab308, #ca8a04);
-    border-radius: 4px;
-    margin-top: 3px;
-    position: relative;
-    border: 0.5px solid rgba(0,0,0,0.1);
-}
-
-/* Photo de profil agrandie (Passage à 82px) */
+/* La Photo passe tout en haut */
 .profile-photo {
-    width: 82px !important;
-    height: 82px !important;
+    width: 76px !important;
+    height: 76px !important;
     border-radius: 50%;
     border: 2.5px solid;
-    margin: 5px auto !important;
+    margin: 0 auto 8px auto !important; /* Centré avec espace en dessous */
     overflow: hidden;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex-shrink: 0;
 }
 
 .profile-photo img {
@@ -329,13 +289,54 @@ body {
     object-fit: cover;
 }
 
-.badge-details {
-    text-align: center;
+/* Le titre de l'entreprise descend sous la photo */
+.badge-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-bottom: 1.5px solid;
+    padding-bottom: 5px;
+    margin-bottom: 8px;
 }
 
-/* Nom d'écriture plus grand (Passage à 16px) */
+.company-logo {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon {
+    font-size: 10px;
+}
+
+.badge-header h2 {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    font-weight: 800;
+}
+
+/* Puce RFID à côté ou sous l'en-tête */
+.rfid-chip {
+    width: 24px;
+    height: 18px;
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    border-radius: 3px;
+    margin: 0 auto 6px auto;
+    border: 0.5px solid rgba(0,0,0,0.1);
+}
+
+/* Détails du personnel (Nom, Poste, ID) */
+.badge-details {
+    text-align: center;
+    margin-bottom: auto; /* Pousse le statut tout en bas */
+}
+
 .badge-details h1 {
-    font-size: 16px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     margin-bottom: 2px !important;
     white-space: nowrap;
@@ -343,33 +344,33 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Poste/Fonction plus grand (Passage à 12px) */
 .badge-details p {
-    font-size: 12px !important;
+    font-size: 11px !important;
     font-weight: 600 !important;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
-/* ID plus grand (Passage à 10.5px) */
 .badge-id {
     font-family: monospace;
-    font-size: 10.5px !important;
+    font-size: 10px !important;
     font-weight: bold;
     background: rgba(0, 0, 0, 0.05);
-    padding: 2px 8px !important;
+    padding: 1px 6px !important;
     border-radius: 3px;
     display: inline-block;
 }
 
+/* Indicateur de présence (Tout en bas) */
 .status-indicator-container {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
     background: #ffffff;
-    padding: 3px;
+    padding: 4px;
     border-radius: 5px;
     border: 0.5px solid #e2e8f0;
+    margin-top: auto;
 }
 
 .status-indicator-container span {
@@ -389,13 +390,12 @@ body {
 .status-dot.meeting { background-color: #eab308; }
 .status-dot.offline { background-color: #ef4444; }
 
-/* ----------------------------------
-   VERSO DU BADGE
-   ---------------------------------- */
+/* --- VERSO DU BADGE --- */
 .badge-back {
     background: linear-gradient(145deg, #1e293b, #0f172a);
     color: #f8fafc;
     transform: rotateY(180deg);
+    justify-content: space-between;
 }
 
 .badge-header-back {
@@ -456,70 +456,64 @@ body {
 .badge-footer-back small {
     font-size: 7px;
     color: #64748b;
-    text-transform: uppercase;
 }
 
 .copyright-notice {
-    font-size: 5.5px;
+    font-size: 6px;
     color: #475569;
     margin-top: 2px;
 }
 
 /* ==========================================================================
-   7. IMPULSION STRICTE POUR L'IMPRESSION SYSTÈME (A4 PRINT)
+   7. PARAMÉTRAGE DE L'IMPRESSION (CORRIGÉ : RECTO SEUL & COULEURS)
    ========================================================================== */
 @media print {
-    .no-print, 
-    .control-panel, 
-    .language-selector, 
-    .badge-actions, 
-    .btn-badge-action {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        width: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
     body {
-        background-color: white !important;
+        background: white !important;
         padding: 0 !important;
-        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important;
     }
-
+    
+    .no-print, .badge-actions {
+        display: none !important;
+    }
+    
     .main-wrapper {
         display: block !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
     }
-
+    
     .print-zone-grid {
         display: grid !important;
-        grid-template-columns: repeat(3, var(--badge-width)) !important;
-        gap: 15mm !important;
+        grid-template-columns: repeat(3, 54mm) !important;
+        gap: 10mm !important;
         padding: 0 !important;
-        margin: 0 !important;
-        border: none !important;
         box-shadow: none !important;
         background: transparent !important;
     }
-
+    
     .badge-container {
-        page-break-inside: avoid;
-        margin: 0 !important;
+        perspective: none !important;
     }
 
     .badge-card {
+        transform: none !important;
         box-shadow: none !important;
-        border: 0.2px solid rgba(0,0,0,0.15) !important;
+        border: 0.5pt solid #cbd5e1 !important;
     }
 
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+    /* Force l'affichage strict du Recto */
+    .badge-front {
+        position: relative !important;
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        backface-visibility: visible !important;
+        transform: none !important;
+    }
+
+    /* Masque le Verso lors du print de la planche */
+    .badge-back {
+        display: none !important;
     }
 }
-    

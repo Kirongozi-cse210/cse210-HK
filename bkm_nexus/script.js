@@ -200,7 +200,6 @@ if(btnAdd) {
             listPersonnel.push(nouvelAgent);
         }
         
-        // Sauvegarde de l'état actuel
         sauvegarderDansLeNavigateur();
 
         // Réinitialisation du formulaire complet
@@ -253,7 +252,7 @@ if(btnClear) {
     });
 }
 
-// AFICHAGE ÉCRAN (54mm x 86mm)
+// AFFICHAGE ÉCRAN (54mm x 86mm)
 function renderBadges() {
     printZone.innerHTML = "";
     if (badgeCountEl) badgeCountEl.textContent = listPersonnel.length;
@@ -268,7 +267,7 @@ function renderBadges() {
 
         let styleBackground = `background: linear-gradient(145deg, #ffffff, ${agent.couleurFond}) !important;`;
         if (agent.bgImage) {
-            styleBackground = `background-image: url('${agent.bgImage}') !important;`;
+            styleBackground = `background-image: url('${agent.bgImage}') !important; background-size: cover;`;
         }
 
         const badgeHTML = `
@@ -354,7 +353,7 @@ function exportToWordRectoVerso() {
                 size: 21cm 29.7cm;
                 margin: 1.5cm 1.5cm 1.5cm 1.5cm;
             }
-            body { font-family: 'Segoe UI', Arial, sans-serif; }
+            body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #ffffff; }
             .word-badge-table { border-collapse: collapse; margin: 0 auto; }
             .badge-cell {
                 width: 54mm; height: 86mm; max-width: 54mm; max-height: 86mm;
@@ -367,7 +366,7 @@ function exportToWordRectoVerso() {
     `;
 
     // PAGE 1 : LES RECTOS
-    wordHTML += `<h2>PAGE 1 : RECTOS</h2>`;
+    wordHTML += `<h2 style="font-size:14pt; color:#1e293b; margin-bottom:10px;">PAGE 1 : RECTOS</h2>`;
     wordHTML += `<table class="word-badge-table"><tr>`;
     
     listPersonnel.forEach((agent, index) => {
@@ -394,22 +393,24 @@ function exportToWordRectoVerso() {
 
     // PAGE 2 : LES VERSOS (Inversement mathématique des colonnes)
     wordHTML += `<div class="page-break"></div>`;
-    wordHTML += `<h2>PAGE 2 : VERSOS</h2>`;
+    wordHTML += `<h2 style="font-size:14pt; color:#1e293b; margin-bottom:10px;">PAGE 2 : VERSOS</h2>`;
     wordHTML += `<table class="word-badge-table"><tr>`;
 
     for (let i = 0; i < listPersonnel.length; i += 3) {
         let rowAgents = listPersonnel.slice(i, i + 3);
-        rowAgents.reverse(); // Aligne le dos sur le devant après rotation physique du papier
+        rowAgents.reverse(); // Aligne parfaitement le dos sur le devant après rotation physique de la page imprimée
 
         rowAgents.forEach((agent) => {
             wordHTML += `
-                <td class="badge-cell" style="background: #1e293b; color: #f8fafc; text-align: center;">
+                <td class="badge-cell" style="background-color: #1e293b; color: #f8fafc; text-align: center;">
                     <div style="font-size: 8pt; color: #f87171; border: 1px solid #ef4444; padding: 2px; font-weight: bold; margin-bottom: 12px;">${data.textProperty}</div>
                     <p style="font-size: 8pt; color: #94a3b8; line-height: 1.3; margin-bottom: 20px;">${data.textInstructions}</p>
-                    <div style="background: white; padding: 5px; color: black; margin-bottom: 10px;">
+                    <div style="background-color: #ffffff; padding: 5px; color: #000000; margin-bottom: 10px;">
                         <div style="font-family: monospace; font-size: 11pt; letter-spacing: -0.5px; font-weight: bold;">||||| ||| |||| || |||| |||</div>
-                        <small style="font-size: 7pt; font-family: monospace;">${agent.serial}</small>
+                        <small style="font-size: 7pt; font-family: monospace; color: #475569;">${agent.serial}</small>
                     </div>
+                    <div style="font-size: 7pt; color: #64748b; margin-top: 15px;">${data.textScanVerify}</div>
+                    <div style="font-size: 6.5pt; color: #475569; margin-top: 5px;">© 2026 Smart Security</div>
                 </td>
             `;
         });
@@ -418,7 +419,6 @@ function exportToWordRectoVerso() {
 
     wordHTML += `</tr></table></body></html>`;
 
-    // Téléchargement immédiat
     const blob = new Blob(['\ufeff' + wordHTML], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -430,6 +430,5 @@ function exportToWordRectoVerso() {
     URL.revokeObjectURL(url);
 }
 
-// Chargement initial au boot
 chargerDepuisLeNavigateur();
 updateLanguage();
