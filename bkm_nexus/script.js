@@ -23,7 +23,7 @@ const translations = {
         btnAdd: "➕ Ajouter à la Planche",
         btnSave: "💾 Sauvegarder le Badge",
         btnClear: "🗑️ Vider la Planche",
-        btnPrint: "🖨️ Imprimer la Planche (A4)",
+        btnPrint: "🖨️ Imprimer les Rectos (A4)",
         alertEmpty: "Veuillez remplir au moins le nom et le poste avant d'ajouter."
     },
     en: {
@@ -50,7 +50,7 @@ const translations = {
         btnAdd: "➕ Add to Board",
         btnSave: "💾 Save Badge Changes",
         btnClear: "🗑️ Clear Board",
-        btnPrint: "🖨️ Print Board (A4)",
+        btnPrint: "🖨️ Print Fronts (A4)",
         alertEmpty: "Please fill in at least the name and role before adding."
     }
 };
@@ -89,6 +89,11 @@ const inputStatus = document.getElementById('input-status');
 const inputPhoto = document.getElementById('input-photo');
 const printZone = document.getElementById('print-zone');
 
+// Appliquer directement le libellé personnalisé sur le bouton Word
+if(btnExportWord) {
+    btnExportWord.textContent = "🖨️ Imprimer les Versos (Word)";
+}
+
 // ==========================================
 // FONCTIONS DE PERSISTANCE (LOCALSTORAGE)
 // ==========================================
@@ -103,7 +108,6 @@ function chargerDepuisLeNavigateur() {
     }
 }
 
-// Mettre à jour l'interface et la langue
 function updateLanguage() {
     const data = translations[currentLang];
     if(btnLang) btnLang.textContent = data.btnLang;
@@ -132,10 +136,13 @@ if(btnLang) {
     btnLang.addEventListener('click', () => {
         currentLang = (currentLang === 'fr') ? 'en' : 'fr';
         updateLanguage();
+        // Conserver le texte personnalisé après changement de langue
+        if(btnExportWord) {
+            btnExportWord.textContent = currentLang === 'fr' ? "🖨️ Imprimer les Versos (Word)" : "🖨️ Print Backs (Word)";
+        }
     });
 }
 
-// Convertisseur Fichiers -> Base64 (Photo de profil)
 if(inputPhoto) {
     inputPhoto.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -147,7 +154,6 @@ if(inputPhoto) {
     });
 }
 
-// Convertisseur Fichiers -> Base64 (Image de fond arrière-plan)
 if(inputBgImage) {
     inputBgImage.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -159,7 +165,6 @@ if(inputBgImage) {
     });
 }
 
-// Traitement Ajout / Modification Formulaire
 if(btnAdd) {
     btnAdd.addEventListener('click', () => {
         if(!inputName.value.trim() || !inputRole.value.trim()) {
@@ -202,7 +207,6 @@ if(btnAdd) {
         
         sauvegarderDansLeNavigateur();
 
-        // Réinitialisation du formulaire complet
         inputName.value = "";
         inputRole.value = "";
         inputId.value = "";
@@ -252,7 +256,7 @@ if(btnClear) {
     });
 }
 
-// AFFICHAGE ÉCRAN (54mm x 86mm)
+// AFFICHAGE ÉCRAN
 function renderBadges() {
     printZone.innerHTML = "";
     if (badgeCountEl) badgeCountEl.textContent = listPersonnel.length;
@@ -280,16 +284,13 @@ function renderBadges() {
                 <div class="badge-card ${estEnCoursEdite}" onclick="if(!event.target.closest('.badge-actions')) this.classList.toggle('flipped')">
                     
                     <div class="badge-face badge-front" style="${styleBackground} color: ${agent.couleurTexte} !important;">
-                        <div class="badge-header" style="border-bottom-color: ${agent.couleurTexte} !important;">
-                            <div class="company-logo" style="background-color: ${agent.couleurTexte} !important;">
-                                <span class="logo-icon" style="color: #ffffff !important;">🔒</span>
-                            </div>
-                            <h2 style="color: ${agent.couleurTexte} !important;">SMART SECURITY</h2>
-                        </div>
-                        <div class="rfid-chip"></div>
                         <div class="profile-photo" style="border-color: ${agent.couleurTexte} !important;">
                             <img src="${agent.photo}" alt="Profile">
                         </div>
+                        
+                        <div class="badge-header" style="border-bottom-color: ${agent.couleurTexte} !important; height: 5px; margin-bottom: 12px;"></div>
+                        
+                        <div class="rfid-chip"></div>
                         <div class="badge-details">
                             <h1 style="color: ${agent.couleurTexte} !important;">${agent.nom}</h1>
                             <p style="color: ${agent.couleurTexte} !important; opacity: 0.9;">${agent.poste}</p>
@@ -307,10 +308,24 @@ function renderBadges() {
                         </div>
                         <div class="badge-back-content">
                             <p>${data.textInstructions}</p>
+                            
                             <div class="barcode-zone">
-                                <div class="barcode-lines">||||| ||| |||| || |||| |||</div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:2px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:4px; margin-right:2px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:1px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:3px; margin-right:2px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:1px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:4px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:2px; margin-right:2px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:1px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:3px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:4px; margin-right:2px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:1px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:2px; margin-right:1px;"></div>
+                                <div style="display:inline-block; background:#000000; height:24px; width:3px; margin-right:1px;"></div>
                                 <small>${agent.serial}</small>
                             </div>
+
                         </div>
                         <div class="badge-footer-back">
                             <small>${data.textScanVerify}</small>
@@ -330,7 +345,7 @@ if(btnPrint) {
 }
 
 // ====================================================
-// MODULE COMPATIBILITÉ MICROSOFT WORD (RECTO-VERSO LOGIC)
+// MODULE MICROSOFT WORD RECTO-VERSO NETTOYÉ
 // ====================================================
 if(btnExportWord) {
     btnExportWord.addEventListener('click', exportToWordRectoVerso);
@@ -351,13 +366,13 @@ function exportToWordRectoVerso() {
         <style>
             @page {
                 size: 21cm 29.7cm;
-                margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+                margin: 1.5cm;
             }
             body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #ffffff; }
-            .word-badge-table { border-collapse: collapse; margin: 0 auto; }
+            .word-badge-table { border-collapse: separate; border-spacing: 12pt; margin: 0 auto; }
             .badge-cell {
                 width: 54mm; height: 86mm; max-width: 54mm; max-height: 86mm;
-                border: 0.5pt solid #64748b; padding: 12px; vertical-align: top; overflow: hidden;
+                border: 1pt dashed #cbd5e1; padding: 12px; vertical-align: top; overflow: hidden;
             }
             .page-break { page-break-before: always; clear: both; }
         </style>
@@ -366,7 +381,7 @@ function exportToWordRectoVerso() {
     `;
 
     // PAGE 1 : LES RECTOS
-    wordHTML += `<h2 style="font-size:14pt; color:#1e293b; margin-bottom:10px;">PAGE 1 : RECTOS</h2>`;
+    wordHTML += `<h2 style="font-size:13pt; color:#475569; font-family:sans-serif; margin-bottom:10px; text-align:center;">--- PAGE 1 : RECTOS (FACE) ---</h2>`;
     wordHTML += `<table class="word-badge-table"><tr>`;
     
     listPersonnel.forEach((agent, index) => {
@@ -377,40 +392,58 @@ function exportToWordRectoVerso() {
 
         wordHTML += `
             <td class="badge-cell" style="${styleBg} color: ${agent.couleurTexte};">
-                <div style="text-align:center; font-weight:bold; font-size:10pt; border-bottom:1px solid ${agent.couleurTexte}; padding-bottom:3px; margin-bottom:6px;">🔒 SMART SECURITY</div>
-                <div style="text-align:center; margin-bottom:6px;">
-                    <img src="${agent.photo}" style="width:65px; height:65px; border-radius:50%; border:2px solid ${agent.couleurTexte};" />
+                <div style="text-align:center; margin-bottom:12px; margin-top:5px;">
+                    <img src="${agent.photo}" style="width:70px; height:70px; border-radius:50%; border:2px solid ${agent.couleurTexte};" />
                 </div>
+                
+                <div style="border-bottom:1px solid ${agent.couleurTexte}; margin-bottom:15px; height:2px;"></div>
+                
                 <div style="text-align:center;">
-                    <div style="font-size:11pt; font-weight:bold; margin-bottom:2px;">${agent.nom}</div>
-                    <div style="font-size:9pt; opacity:0.8; margin-bottom:4px;">${agent.poste}</div>
-                    <div style="font-size:8pt; font-family:monospace; background:rgba(0,0,0,0.06); display:inline-block; padding:1px 4px;">ID: ${agent.idCard}</div>
+                    <div style="font-size:12pt; font-weight:800; margin-bottom:2px;">${agent.nom}</div>
+                    <div style="font-size:9.5pt; font-weight:600; opacity:0.8; margin-bottom:8px;">${agent.poste}</div>
+                    <div style="font-size:8.5pt; font-family:monospace; background:rgba(0,0,0,0.06); display:inline-block; padding:2px 6px; border-radius:3px;">ID: ${agent.idCard}</div>
                 </div>
             </td>
         `;
     });
     wordHTML += `</tr></table>`;
 
-    // PAGE 2 : LES VERSOS (Inversement mathématique des colonnes)
+    // PAGE 2 : LES VERSOS
     wordHTML += `<div class="page-break"></div>`;
-    wordHTML += `<h2 style="font-size:14pt; color:#1e293b; margin-bottom:10px;">PAGE 2 : VERSOS</h2>`;
+    wordHTML += `<h2 style="font-size:13pt; color:#475569; font-family:sans-serif; margin-bottom:10px; text-align:center;">--- PAGE 2 : VERSOS (DOS) ---</h2>`;
     wordHTML += `<table class="word-badge-table"><tr>`;
 
     for (let i = 0; i < listPersonnel.length; i += 3) {
         let rowAgents = listPersonnel.slice(i, i + 3);
-        rowAgents.reverse(); // Aligne parfaitement le dos sur le devant après rotation physique de la page imprimée
+        rowAgents.reverse(); 
 
         rowAgents.forEach((agent) => {
             wordHTML += `
                 <td class="badge-cell" style="background-color: #1e293b; color: #f8fafc; text-align: center;">
-                    <div style="font-size: 8pt; color: #f87171; border: 1px solid #ef4444; padding: 2px; font-weight: bold; margin-bottom: 12px;">${data.textProperty}</div>
-                    <p style="font-size: 8pt; color: #94a3b8; line-height: 1.3; margin-bottom: 20px;">${data.textInstructions}</p>
-                    <div style="background-color: #ffffff; padding: 5px; color: #000000; margin-bottom: 10px;">
-                        <div style="font-family: monospace; font-size: 11pt; letter-spacing: -0.5px; font-weight: bold;">||||| ||| |||| || |||| |||</div>
-                        <small style="font-size: 7pt; font-family: monospace; color: #475569;">${agent.serial}</small>
+                    <div style="font-size: 8pt; color: #f87171; border: 1px solid #ef4444; padding: 3px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase;">${data.textProperty}</div>
+                    <p style="font-size: 8pt; color: #94a3b8; line-height: 1.4; margin-bottom: 25px; padding: 0 5px;">${data.textInstructions}</p>
+                    
+                    <div style="background-color: #ffffff; padding: 6px; color: #000000; margin-bottom: 15px; border-radius: 4px; text-align:center;">
+                        <div style="margin-bottom:3px;">
+                            <span style="display:inline-block; background:#000000; height:18px; width:2px;"></span>
+                            <span style="display:inline-block; background:#ffffff; height:18px; width:1px;"></span>
+                            <span style="display:inline-block; background:#000000; height:18px; width:4px;"></span>
+                            <span style="display:inline-block; background:#ffffff; height:18px; width:2px;"></span>
+                            <span style="display:inline-block; background:#000000; height:18px; width:1px;"></span>
+                            <span style="display:inline-block; background:#ffffff; height:18px; width:1px;"></span>
+                            <span style="display:inline-block; background:#000000; height:18px; width:3px;"></span>
+                            <span style="display:inline-block; background:#ffffff; height:18px; width:1px;"></span>
+                            <span style="display:inline-block; background:#000000; height:18px; width:4px;"></span>
+                            <span style="display:inline-block; background:#ffffff; height:18px; width:1px;"></span>
+                            <span style="display:inline-block; background:#000000; height:18px; width:2px;"></span>
+                            <span style="display:inline-block; background:#ffffff; height:18px; width:2px;"></span>
+                            <span style="display:inline-block; background:#000000; height:18px; width:4px;"></span>
+                        </div>
+                        <small style="font-size: 7.5pt; font-family: monospace; color: #475569; display:block;">${agent.serial}</small>
                     </div>
-                    <div style="font-size: 7pt; color: #64748b; margin-top: 15px;">${data.textScanVerify}</div>
-                    <div style="font-size: 6.5pt; color: #475569; margin-top: 5px;">© 2026 Smart Security</div>
+
+                    <div style="font-size: 7.5pt; color: #64748b; margin-top: 20px;">${data.textScanVerify}</div>
+                    <div style="font-size: 6.5pt; color: #475569; margin-top: 8px;">© 2026 Smart Security</div>
                 </td>
             `;
         });
@@ -423,7 +456,7 @@ function exportToWordRectoVerso() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `planche_badges_word_${Date.now()}.doc`;
+    a.download = `planche_badges_clean_${Date.now()}.doc`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
