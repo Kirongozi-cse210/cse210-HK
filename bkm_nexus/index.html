@@ -6,7 +6,7 @@
     <title>Générateur de Badges Professionnel</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Styles rapides pour la gestion à l'écran */
+        /* Styles rapides pour la gestion dynamique à l'écran */
         .badge-actions {
             position: absolute;
             top: -15px;
@@ -25,6 +25,8 @@
             align-items: center;
             font-size: 0.9rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
         }
         .btn-edit-badge { background: #eab308; color: white; }
         .btn-delete-badge { background: #ef4444; color: white; }
@@ -43,7 +45,6 @@
     </div>
 
     <div class="main-wrapper">
-        
         <div id="print-zone" class="print-zone-grid"></div>
 
         <div class="control-panel no-print">
@@ -105,7 +106,6 @@
                 <span id="badge-count">0</span> badge(s) prêt(s) (Idéal: 6 à 8 par page A4)
             </div>
         </div>
-
     </div>
 
     <script src="script.js"></script>

@@ -57,11 +57,12 @@ const translations = {
 
 let currentLang = 'fr';
 let listPersonnel = []; 
-let tempPhotoData = "https://via.placeholder.com/150"; 
-let tempBgImageData = null; // Contiendra l'image de fond si choisie
+const defaultPhoto = "https://via.placeholder.com/150";
+let tempPhotoData = defaultPhoto; 
+let tempBgImageData = null; 
 let idEnCoursDeModification = null; 
 
-// DOM Elements
+// Éléments du DOM
 const btnLang = document.getElementById('btn-lang');
 const panelTitle = document.getElementById('panel-title');
 const labelName = document.getElementById('label-name');
@@ -87,6 +88,21 @@ const inputStatus = document.getElementById('input-status');
 const inputPhoto = document.getElementById('input-photo');
 const printZone = document.getElementById('print-zone');
 
+// ==========================================
+// FONCTIONS DE SAUVEGARDE (LOCALSTORAGE)
+// ==========================================
+function sauvegarderDansLeNavigateur() {
+    localStorage.setItem('sauvegardePlanchePersonnel', JSON.stringify(listPersonnel));
+}
+
+function chargerDepuisLeNavigateur() {
+    const donneesStockees = localStorage.getItem('sauvegardePlanchePersonnel');
+    if (donneesStockees) {
+        listPersonnel = JSON.parse(donneesStockees);
+    }
+}
+
+// Mettre à jour l'interface et la langue
 function updateLanguage() {
     const data = translations[currentLang];
     if(btnLang) btnLang.textContent = data.btnLang;
@@ -118,7 +134,7 @@ if(btnLang) {
     });
 }
 
-// Écouteur pour la photo de profil
+// Convertisseur Fichiers -> Base64 (Photo de profil)
 if(inputPhoto) {
     inputPhoto.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -130,7 +146,7 @@ if(inputPhoto) {
     });
 }
 
-// Écouteur pour l'image de fond
+// Convertisseur Fichiers -> Base64 (Image de fond arrière-plan)
 if(inputBgImage) {
     inputBgImage.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -142,7 +158,7 @@ if(inputBgImage) {
     });
 }
 
-// Action Ajouter / Modifier
+// Traitement Ajout / Modification Formulaire
 if(btnAdd) {
     btnAdd.addEventListener('click', () => {
         if(!inputName.value.trim() || !inputRole.value.trim()) {
@@ -153,56 +169,53 @@ if(btnAdd) {
         const customID = inputId.value.trim() || "#0000";
 
         if (idEnCoursDeModification !== null) {
-            // Sauvegarder les corrections
             const index = listPersonnel.findIndex(agent => agent.idUnique === idEnCoursDeModification);
             if (index !== -1) {
-                listPersonnel[index].nom = inputName.value;
-                listPersonnel[index].poste = inputRole.value;
+                listPersonnel[index].nom = inputName.value.trim();
+                listPersonnel[index].poste = inputRole.value.trim();
                 listPersonnel[index].idCard = customID;
                 listPersonnel[index].serial = `SN-2026-${customID.replace('#', '')}`;
                 listPersonnel[index].couleurTexte = inputTextColor.value;
                 listPersonnel[index].couleurFond = inputBgColor.value;
                 listPersonnel[index].statut = inputStatus.value;
                 
-                if(tempPhotoData !== "https://via.placeholder.com/150") {
-                    listPersonnel[index].photo = tempPhotoData;
-                }
-                if(tempBgImageData !== null) {
-                    listPersonnel[index].bgImage = tempBgImageData;
-                }
+                if(tempPhotoData !== defaultPhoto) listPersonnel[index].photo = tempPhotoData;
+                if(tempBgImageData !== null) listPersonnel[index].bgImage = tempBgImageData;
             }
             idEnCoursDeModification = null;
         } else {
-            // Ajouter un nouveau badge différent
             const nouvelAgent = {
                 idUnique: Date.now(),
-                nom: inputName.value,
-                poste: inputRole.value,
+                nom: inputName.value.trim(),
+                poste: inputRole.value.trim(),
                 idCard: customID,
                 serial: `SN-2026-${customID.replace('#', '')}`,
                 couleurTexte: inputTextColor.value,
                 couleurFond: inputBgColor.value,
-                bgImage: tempBgImageData, // stocke l'image de fond choisie
+                bgImage: tempBgImageData,
                 photo: tempPhotoData,
                 statut: inputStatus.value
             };
             listPersonnel.push(nouvelAgent);
         }
         
-        // Reset des formulaires
+        // PERSISTANCE : On sauvegarde la liste mise à jour
+        sauvegarderDansLeNavigateur();
+
+        // Réinitialisation du formulaire complet
         inputName.value = "";
         inputRole.value = "";
         inputId.value = "";
         inputPhoto.value = "";
         inputBgImage.value = "";
-        tempPhotoData = "https://via.placeholder.com/150";
+        tempPhotoData = defaultPhoto;
         tempBgImageData = null;
 
         updateLanguage();
     });
 }
 
-function preparerModification(idUnique) {
+window.preparerModification = function(idUnique) {
     const agent = listPersonnel.find(a => a.idUnique === idUnique);
     if (!agent) return;
 
@@ -218,25 +231,33 @@ function preparerModification(idUnique) {
     tempBgImageData = agent.bgImage;
 
     updateLanguage();
-}
+};
 
-function supprimerBadge(idUnique) {
+window.supprimerBadge = function(idUnique) {
     listPersonnel = listPersonnel.filter(agent => agent.idUnique !== idUnique);
     if(idEnCoursDeModification === idUnique) idEnCoursDeModification = null;
+    
+    // PERSISTANCE : Mise à jour après suppression
+    sauvegarderDansLeNavigateur();
     updateLanguage();
-}
+};
 
 if(btnClear) {
     btnClear.addEventListener('click', () => {
-        listPersonnel = [];
-        idEnCoursDeModification = null;
-        updateLanguage();
+        if(confirm("Voulez-vous vraiment vider toute la planche ?")) {
+            listPersonnel = [];
+            idEnCoursDeModification = null;
+            
+            // PERSISTANCE : On efface aussi le stockage local
+            localStorage.removeItem('sauvegardePlanchePersonnel');
+            updateLanguage();
+        }
     });
 }
 
 function renderBadges() {
     printZone.innerHTML = "";
-    badgeCountEl.textContent = listPersonnel.length;
+    if (badgeCountEl) badgeCountEl.textContent = listPersonnel.length;
     const data = translations[currentLang];
 
     listPersonnel.forEach((agent) => {
@@ -246,7 +267,6 @@ function renderBadges() {
 
         const estEnCoursEdite = (agent.idUnique === idEnCoursDeModification) ? 'editing-highlight' : '';
 
-        // Définir le style de fond (soit image chargée, soit dégradé de couleur)
         let styleBackground = `background: linear-gradient(145deg, #ffffff, ${agent.couleurFond}) !important;`;
         if (agent.bgImage) {
             styleBackground = `background-image: url('${agent.bgImage}') !important;`;
@@ -264,7 +284,7 @@ function renderBadges() {
                     <div class="badge-face badge-front" style="${styleBackground} color: ${agent.couleurTexte} !important;">
                         <div class="badge-header" style="border-bottom-color: ${agent.couleurTexte} !important;">
                             <div class="company-logo" style="background-color: ${agent.couleurTexte} !important;">
-                                <span class="logo-icon">🔒</span>
+                                <span class="logo-icon" style="color: #ffffff !important;">🔒</span>
                             </div>
                             <h2 style="color: ${agent.couleurTexte} !important;">SMART SECURITY</h2>
                         </div>
@@ -311,4 +331,6 @@ if(btnPrint) {
     btnPrint.addEventListener('click', () => { window.print(); });
 }
 
-renderBadges();
+// INITIALISATION SYNC : Charger les anciennes données avant le premier affichage
+chargerDepuisLeNavigateur();
+updateLanguage();
