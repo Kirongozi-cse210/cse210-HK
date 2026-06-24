@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Badges Professionnels</title>
+    <title>Smart Security - Générateur de Badges Pro</title>
     <style>
-        /* Styles de base pour l'application */
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
@@ -121,6 +120,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
+        /* Grille d'affichage écran */
         .print-grid {
             display: flex;
             flex-wrap: wrap;
@@ -128,59 +128,67 @@
             justify-content: center;
         }
 
-        /* --- STYLES DES BADGES CRIDÉDITEURS --- */
+        /* --- STRUCTURE DU BADGE (CR80) --- */
         .badge-container {
             position: relative;
             width: 54mm;
             height: 86mm;
-            perspective: 1000px;
+            border-radius: 10px;
         }
 
         .badge-card {
             width: 100%;
             height: 100%;
             position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s ease;
-            cursor: pointer;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             border-radius: 10px;
-        }
-
-        .badge-card.flipped {
-            transform: rotateY(180deg);
+            background: #ffffff;
+            
+            /* Correctif clé 1 : Isole le contexte graphique pour bloquer les fuites de couleur */
+            isolation: isolate; 
         }
 
         .badge-face {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 10px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             padding: 14px;
             display: flex;
             flex-direction: column;
             border: 1px solid #cbd5e1;
-            overflow: hidden;
+            
+            /* Correctif clé 2 : Forçage de l'arrondi sur les coins pour empêcher le fond de déborder */
+            border-radius: 10px;
+            overflow: hidden; 
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            
+            background-size: cover !important;
+            background-position: center !important;
+            
+            /* Prépare l'impression couleur */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
-        /* RECTO (Face avant) */
+        /* RECTO */
         .badge-front {
+            z-index: 2;
             background: #ffffff;
             align-items: center;
             justify-content: flex-start;
         }
 
         .profile-photo {
-            width: 75mm;
-            height: 75mm;
-            max-width: 85px;
-            max-height: 85px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             border: 3px solid #2563eb;
             overflow: hidden;
             margin-bottom: 10px;
             background: #f1f5f9;
+            flex-shrink: 0;
         }
 
         .profile-photo img {
@@ -197,7 +205,7 @@
         .rfid-chip {
             width: 25px;
             height: 20px;
-            background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+            background: linear-gradient(135deg, #e2e8f0, #94a3b8) !important;
             border-radius: 4px;
             align-self: flex-start;
             margin-top: -5px;
@@ -237,7 +245,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            background: #ffffff;
+            background: #ffffff !important;
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
@@ -252,15 +260,15 @@
             height: 8px;
             border-radius: 50%;
         }
-        .status-dot.online { background-color: #22c55e; }
-        .status-dot.meeting { background-color: #eab308; }
-        .status-dot.offline { background-color: #ef4444; }
+        .status-dot.online { background-color: #22c55e !important; }
+        .status-dot.meeting { background-color: #eab308 !important; }
+        .status-dot.offline { background-color: #ef4444 !important; }
 
-        /* VERSO (Dos arrière) */
+        /* VERSO */
         .badge-back {
-            background-color: #1e293b;
+            z-index: 1;
+            background-color: #1e293b !important;
             color: #f8fafc;
-            transform: rotateY(180deg);
             text-align: center;
             justify-content: space-between;
         }
@@ -282,7 +290,7 @@
         }
 
         .barcode-zone {
-            background: white;
+            background: white !important;
             padding: 6px;
             border-radius: 4px;
             color: black;
@@ -308,7 +316,6 @@
             color: #475569;
         }
 
-        /* Actions sur les badges au survol */
         .badge-actions {
             position: absolute;
             top: -10px;
@@ -333,24 +340,48 @@
             outline: 3px solid #3b82f6;
         }
 
-        /* Styles Impression Professionnelle A4 */
+        /* --- FILTRES DU MODE D'AFFICHAGE --- */
+        body.print-recto .badge-back { display: none !important; }
+        body.print-recto .badge-front { display: flex !important; z-index: 5; }
+
+        body.print-verso .badge-front { display: none !important; }
+        body.print-verso .badge-back { display: flex !important; z-index: 5; }
+        body.print-verso .print-grid { direction: rtl; } 
+
+        /* --- CONFIGURATION IMPRESSION PROFESSIONNELLE A4 --- */
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             body { background: white; padding: 0; }
-            .config-panel, .preview-header, .badge-actions, .no-print { display: none !important; }
+            .config-panel, .preview-header, .badge-actions, .no-print, .no-print * { display: none !important; }
             .preview-panel { width: 100%; min-width: 100%; }
-            .print-grid { display: block; margin: 0; padding: 0; }
+            .print-grid { 
+                display: flex !important; 
+                flex-wrap: wrap !important; 
+                gap: 6mm !important; 
+                justify-content: flex-start !important;
+            }
             .badge-container {
-                float: left;
-                margin: 4mm;
+                width: 54mm !important;
+                height: 86mm !important;
                 page-break-inside: avoid;
                 box-shadow: none !important;
             }
-            .badge-card { box-shadow: none !important; }
+            .badge-card { 
+                box-shadow: none !important; 
+                border: none !important;
+                isolation: isolate !important;
+            }
         }
     </style>
 </head>
-<body>
-
+<body class="print-recto"> 
     <div class="app-container">
         
         <div class="config-panel">
@@ -413,22 +444,217 @@
         </div>
 
         <div class="preview-panel">
+            <div class="no-print" style="margin-bottom: 15px; display: flex; gap: 10px;">
+                <button id="tab-recto" class="btn btn-primary" style="margin:0;" onclick="changerModeVisuel('recto')">👁️ Voir Face (Recto)</button>
+                <button id="tab-verso" class="btn btn-secondary" style="margin:0;" onclick="changerModeVisuel('verso')">👁️ Voir Dos (Verso)</button>
+            </div>
+
             <div class="preview-header no-print">
                 <div>
                     <strong>Planche Actuelle :</strong> <span id="badge-count">0</span> badge(s)
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button id="btn-print" class="btn btn-success" style="margin:0; width:auto;">🖨️ Imprimer les Rectos (A4)</button>
-                    <button id="btn-export-word" class="btn btn-secondary" style="margin:0; width:auto;">🖨️ Imprimer les Versos (Word)</button>
+                    <button id="btn-print" class="btn btn-success" style="margin:0; width:auto;">🖨️ Imprimer les RECTOS</button>
+                    <button id="btn-print-back" class="btn btn-danger" style="margin:0; width:auto;">🖨️ Imprimer les VERSOS</button>
                 </div>
             </div>
 
-            <div id="print-zone" class="print-grid">
-                </div>
+            <div id="print-zone" class="print-grid"></div>
         </div>
 
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const translations = {
+            fr: {
+                btnLang: "🌐 English", statusOnline: "Actif / Présent", statusMeeting: "En Réunion", statusOffline: "Absent",
+                textProperty: "PROPRIÉTÉ EXCLUSIVE", textInstructions: "Ce badge est strictement personnel et requis pour l'accès aux installations.", textScanVerify: "Scanner pour vérification",
+                panelTitleAdd: "⚙️ Ajouter un Personnel", panelTitleEdit: "✏️ Modifier le Personnel", labelName: "Nom & Prénom :", labelRole: "Poste / Fonction :",
+                labelId: "Numéro ID :", labelTextColor: "Couleur du texte :", labelBgColor: "Couleur de fond :", labelBgImage: "Ou Image de fond :",
+                labelPhoto: "Photo de profil :", labelLogo: "Logo de l'entreprise :", labelStatus: "Statut initial :", optOnline: "Présent / Actif",
+                optMeeting: "En Réunion", optOffline: "Absent", btnAdd: "➕ Ajouter à la Planche", btnSave: "💾 Sauvegarder", btnClear: "🗑️ Vider la Planche",
+                alertEmpty: "Veuillez remplir au moins le nom et le poste."
+            },
+            en: {
+                btnLang: "🌐 Français", statusOnline: "Active / Present", statusMeeting: "In a Meeting", statusOffline: "Absent",
+                textProperty: "EXCLUSIVE PROPERTY", textInstructions: "This badge is strictly personal and required for facility access.", textScanVerify: "Scan for verification",
+                panelTitleAdd: "⚙️ Add Personnel", panelTitleEdit: "✏️ Edit Personnel", labelName: "Full Name:", labelRole: "Job Title:",
+                labelId: "ID Number:", labelTextColor: "Text Color:", labelBgColor: "Badge Color:", labelBgImage: "Background Image:",
+                labelPhoto: "Profile Photo:", labelLogo: "Company Logo:", labelStatus: "Initial Status:", optOnline: "Present / Active",
+                optMeeting: "In a Meeting", optOffline: "Absent", btnAdd: "➕ Add to Board", btnSave: "💾 Save Changes", btnClear: "🗑️ Clear Board",
+                alertEmpty: "Please fill in at least the name and role."
+            }
+        };
+
+        let currentLang = 'fr';
+        let listPersonnel = []; 
+        const defaultPhoto = "https://via.placeholder.com/150";
+        let tempPhotoData = defaultPhoto; 
+        let tempBgImageData = null; 
+        let tempLogoData = null; 
+        let idEnCoursDeModification = null; 
+
+        const inputName = document.getElementById('input-name');
+        const inputRole = document.getElementById('input-role');
+        const inputId = document.getElementById('input-id');
+        const inputTextColor = document.getElementById('input-text-color');
+        const inputBgColor = document.getElementById('input-bg-color');
+        const inputBgImage = document.getElementById('input-bg-image');
+        const inputLogo = document.getElementById('input-logo'); 
+        const inputStatus = document.getElementById('input-status');
+        const inputPhoto = document.getElementById('input-photo');
+        const printZone = document.getElementById('print-zone');
+        const badgeCountEl = document.getElementById('badge-count');
+
+        function changerModeVisuel(mode) {
+            if(mode === 'recto') {
+                document.body.classList.add('print-recto');
+                document.body.classList.remove('print-verso');
+                document.getElementById('tab-recto').className = "btn btn-primary";
+                document.getElementById('tab-verso').className = "btn btn-secondary";
+            } else {
+                document.body.classList.add('print-verso');
+                document.body.classList.remove('print-recto');
+                document.getElementById('tab-recto').className = "btn btn-secondary";
+                document.getElementById('tab-verso').className = "btn btn-primary";
+            }
+        }
+
+        document.getElementById('btn-print').addEventListener('click', () => {
+            changerModeVisuel('recto');
+            setTimeout(() => { window.print(); }, 200);
+        });
+
+        document.getElementById('btn-print-back').addEventListener('click', () => {
+            changerModeVisuel('verso');
+            setTimeout(() => { window.print(); }, 200);
+        });
+
+        if(inputPhoto) inputPhoto.addEventListener('change', (e) => { readImg(e.target.files[0], res => tempPhotoData = res); });
+        if(inputBgImage) inputBgImage.addEventListener('change', (e) => { readImg(e.target.files[0], res => tempBgImageData = res); });
+        if(inputLogo) inputLogo.addEventListener('change', (e) => { readImg(e.target.files[0], res => tempLogoData = res); });
+
+        function readImg(file, callback) {
+            if (file) { const r = new FileReader(); r.onload = (ev) => callback(ev.target.result); r.readAsDataURL(file); }
+        }
+
+        document.getElementById('btn-add').addEventListener('click', () => {
+            if(!inputName.value.trim() || !inputRole.value.trim()) { alert(translations[currentLang].alertEmpty); return; }
+            const customID = inputId.value.trim() || "#0000";
+
+            if (idEnCoursDeModification !== null) {
+                const idx = listPersonnel.findIndex(a => a.idUnique === idEnCoursDeModification);
+                if (idx !== -1) {
+                    listPersonnel[idx].nom = inputName.value.trim();
+                    listPersonnel[idx].poste = inputRole.value.trim();
+                    listPersonnel[idx].idCard = customID;
+                    listPersonnel[idx].couleurTexte = inputTextColor.value;
+                    listPersonnel[idx].couleurFond = inputBgColor.value;
+                    listPersonnel[idx].statut = inputStatus.value;
+                    if(tempPhotoData !== defaultPhoto) listPersonnel[idx].photo = tempPhotoData;
+                    if(tempBgImageData) listPersonnel[idx].bgImage = tempBgImageData;
+                    if(tempLogoData) listPersonnel[idx].logo = tempLogoData;
+                }
+                idEnCoursDeModification = null;
+            } else {
+                listPersonnel.push({
+                    idUnique: Date.now(), nom: inputName.value.trim(), poste: inputRole.value.trim(), idCard: customID,
+                    serial: `SN-2026-${customID.replace('#', '')}`, couleurTexte: inputTextColor.value, couleurFond: inputBgColor.value,
+                    bgImage: tempBgImageData, photo: tempPhotoData, logo: tempLogoData, statut: inputStatus.value
+                });
+            }
+            
+            localStorage.setItem('sauvegardePlanchePersonnel', JSON.stringify(listPersonnel));
+            resetForm();
+            renderBadges();
+        });
+
+        function resetForm() {
+            inputName.value = ""; inputRole.value = ""; inputId.value = ""; inputPhoto.value = ""; inputBgImage.value = ""; if(inputLogo) inputLogo.value = "";
+            tempPhotoData = defaultPhoto; tempBgImageData = null; tempLogoData = null;
+            document.getElementById('btn-add').textContent = translations[currentLang].btnAdd;
+            document.getElementById('panel-title').textContent = translations[currentLang].panelTitleAdd;
+        }
+
+        window.preparerModification = function(id) {
+            const a = listPersonnel.find(x => x.idUnique === id);
+            if (!a) return;
+            idEnCoursDeModification = id; inputName.value = a.nom; inputRole.value = a.poste; inputId.value = a.idCard;
+            inputTextColor.value = a.couleurTexte; inputBgColor.value = a.couleurFond; inputStatus.value = a.statut;
+            tempPhotoData = a.photo; tempBgImageData = a.bgImage; tempLogoData = a.logo;
+            document.getElementById('btn-add').textContent = translations[currentLang].btnSave;
+            document.getElementById('panel-title').textContent = translations[currentLang].panelTitleEdit;
+        };
+
+        window.supprimerBadge = function(id) {
+            listPersonnel = listPersonnel.filter(x => x.idUnique !== id);
+            localStorage.setItem('sauvegardePlanchePersonnel', JSON.stringify(listPersonnel));
+            renderBadges();
+        };
+
+        document.getElementById('btn-clear').addEventListener('click', () => {
+            if(confirm("Vider la planche ?")) { listPersonnel = []; localStorage.removeItem('sauvegardePlanchePersonnel'); resetForm(); renderBadges(); }
+        });
+
+        function renderBadges() {
+            printZone.innerHTML = "";
+            badgeCountEl.textContent = listPersonnel.length;
+            const data = translations[currentLang];
+
+            listPersonnel.forEach((agent) => {
+                let statutTxt = agent.statut === 'meeting' ? data.statusMeeting : (agent.statut === 'offline' ? data.statusOffline : data.statusOnline);
+                let styleBg = agent.bgImage ? `background-image: url('${agent.bgImage}') !important;` : `background: linear-gradient(145deg, #ffffff, ${agent.couleurFond}) !important;`;
+                let logoHTML = agent.logo ? `<div style="text-align: center; margin-bottom: 5px;"><img src="${agent.logo}" style="max-height: 25px; max-width: 120px; object-fit: contain;" /></div>` : '';
+
+                const badgeHTML = `
+                    <div class="badge-container">
+                        <div class="badge-actions no-print">
+                            <button class="btn-badge-action" onclick="preparerModification(${agent.idUnique})">✏️</button>
+                            <button class="btn-badge-action" onclick="supprimerBadge(${agent.idUnique})">❌</button>
+                        </div>
+                        <div class="badge-card">
+                            <div class="badge-face badge-front" style="${styleBg} color: ${agent.couleurTexte} !important;">
+                                <div class="profile-photo" style="border-color: ${agent.couleurTexte} !important;">
+                                    <img src="${agent.photo}">
+                                </div>
+                                ${logoHTML}
+                                <div class="badge-header" style="border-bottom-color: ${agent.couleurTexte} !important; height: 2px; margin-bottom: 12px;"></div>
+                                <div class="rfid-chip"></div>
+                                <div class="badge-details">
+                                    <h1 style="color: ${agent.couleurTexte} !important;">${agent.nom}</h1>
+                                    <p style="color: ${agent.couleurTexte} !important;">${agent.poste}</p>
+                                    <p class="badge-id" style="color: ${agent.couleurTexte} !important;">ID: ${agent.idCard}</p>
+                                </div>
+                                <div class="status-indicator-container">
+                                    <span class="status-dot ${agent.statut}"></span>
+                                    <span style="color: #1e293b !important;">${statutTxt}</span>
+                                </div>
+                            </div>
+                            <div class="badge-face badge-back">
+                                <div class="badge-header-back"><h3>${data.textProperty}</h3></div>
+                                <div class="badge-back-content">
+                                    <p>${data.textInstructions}</p>
+                                    <div class="barcode-zone">
+                                        <div style="display:inline-block; background:#000; height:20px; width:2px; margin-right:1px;"></div>
+                                        <div style="display:inline-block; background:#000; height:20px; width:4px; margin-right:2px;"></div>
+                                        <div style="display:inline-block; background:#000; height:20px; width:1px; margin-right:1px;"></div>
+                                        <div style="display:inline-block; background:#000; height:20px; width:3px; margin-right:1px;"></div>
+                                        <small>${agent.serial}</small>
+                                    </div>
+                                </div>
+                                <div class="badge-footer-back">
+                                    <small>${data.textScanVerify}</small>
+                                    <div class="copyright-notice">© 2026 Smart Security</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                printZone.insertAdjacentHTML('beforeend', badgeHTML);
+            });
+        }
+
+        const saved = localStorage.getItem('sauvegardePlanchePersonnel');
+        if(saved) { listPersonnel = JSON.parse(saved); renderBadges(); }
+    </script>
 </body>
 </html>

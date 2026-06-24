@@ -228,7 +228,7 @@ body {
 }
 
 /* ==========================================================================
-   6. ARCHITECTURE DU BADGE CR80 (STRUCTURE FLIPPED ET PHOTO EN HAUT)
+   6. ARCHITECTURE DU BADGE CR80 (RÉSOLUTION DES BUGS DE RENDU)
    ========================================================================== */
 .badge-container {
     width: var(--badge-width);
@@ -245,6 +245,11 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     border-radius: 10px;
+    
+    /* Correctif clé 1 : Isole le contexte de rendu graphique pour bloquer les fuites */
+    isolation: isolate; 
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .badge-card.flipped {
@@ -253,21 +258,30 @@ body {
 
 .badge-face {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden;
+    
+    /* Correctif clé 2 : Forçage matériel de l'arrondi pour éviter que les angles fuient vers le bas */
     border-radius: 10px;
+    overflow: hidden;
+    -webkit-mask-image: -webkit-radial-gradient(white, black); /* Force Safari/Chrome à découper au pixel près */
+    
     padding: 12px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    
+    /* Prépare le navigateur à imprimer les arrières-plans colorés */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
-/* --- RECTO DU BADGE (PHOTO PROULSÉE EN HAUT) --- */
+/* --- RECTO DU BADGE --- */
 .badge-front {
-    background: linear-gradient(145deg, #ffffff, #e2e8f0);
-    justify-content: flex-start; /* Aligne le contenu vers le haut */
+    background: linear-gradient(145deg, #ffffff, #e2e8f0) !important;
+    justify-content: flex-start;
 }
 
 /* La Photo passe tout en haut */
@@ -276,7 +290,7 @@ body {
     height: 76px !important;
     border-radius: 50%;
     border: 2.5px solid;
-    margin: 0 auto 8px auto !important; /* Centré avec espace en dessous */
+    margin: 0 auto 8px auto !important;
     overflow: hidden;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -319,20 +333,20 @@ body {
     font-weight: 800;
 }
 
-/* Puce RFID à côté ou sous l'en-tête */
+/* Puce RFID */
 .rfid-chip {
     width: 24px;
     height: 18px;
-    background: linear-gradient(135deg, #eab308, #ca8a04);
+    background: linear-gradient(135deg, #eab308, #ca8a04) !important;
     border-radius: 3px;
     margin: 0 auto 6px auto;
     border: 0.5px solid rgba(0,0,0,0.1);
 }
 
-/* Détails du personnel (Nom, Poste, ID) */
+/* Détails du personnel */
 .badge-details {
     text-align: center;
-    margin-bottom: auto; /* Pousse le statut tout en bas */
+    margin-bottom: auto;
 }
 
 .badge-details h1 {
@@ -360,7 +374,7 @@ body {
     display: inline-block;
 }
 
-/* Indicateur de présence (Tout en bas) */
+/* Indicateur de présence */
 .status-indicator-container {
     display: flex;
     align-items: center;
@@ -386,13 +400,13 @@ body {
     display: inline-block;
 }
 
-.status-dot.online { background-color: #22c55e; }
-.status-dot.meeting { background-color: #eab308; }
-.status-dot.offline { background-color: #ef4444; }
+.status-dot.online { background-color: #22c55e !important; }
+.status-dot.meeting { background-color: #eab308 !important; }
+.status-dot.offline { background-color: #ef4444 !important; }
 
 /* --- VERSO DU BADGE --- */
 .badge-back {
-    background: linear-gradient(145deg, #1e293b, #0f172a);
+    background: linear-gradient(145deg, #1e293b, #0f172a) !important;
     color: #f8fafc;
     transform: rotateY(180deg);
     justify-content: space-between;
@@ -423,7 +437,7 @@ body {
 }
 
 .barcode-zone {
-    background: white;
+    background: white !important;
     padding: 5px;
     border-radius: 4px;
     color: black;
@@ -465,14 +479,18 @@ body {
 }
 
 /* ==========================================================================
-   7. PARAMÉTRAGE DE L'IMPRESSION (CORRIGÉ : RECTO SEUL & COULEURS)
+   7. PARAMÉTRAGE DE L'IMPRESSION COULEUR FORCÉE
    ========================================================================== */
 @media print {
+    * {
+        /* Force tous les éléments à conserver leurs couleurs et images lors de la génération du PDF / Impression */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
     body {
         background: white !important;
         padding: 0 !important;
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important;
     }
     
     .no-print, .badge-actions {
@@ -500,19 +518,17 @@ body {
         transform: none !important;
         box-shadow: none !important;
         border: 0.5pt solid #cbd5e1 !important;
+        isolation: isolate;
     }
 
-    /* Force l'affichage strict du Recto */
     .badge-front {
         position: relative !important;
         display: flex !important;
         opacity: 1 !important;
         visibility: visible !important;
-        backface-visibility: visible !important;
-        transform: none !important;
+        background: linear-gradient(145deg, #ffffff, #e2e8f0) !important;
     }
 
-    /* Masque le Verso lors du print de la planche */
     .badge-back {
         display: none !important;
     }
