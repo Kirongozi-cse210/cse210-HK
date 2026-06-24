@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Security - Welcome & Contact</title>
+    <style>
+        :root {
+            /* Changement des variables bleues vers des teintes de verre/transparence */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-bg-hover: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-text: #ffffff;
+            
+            --neutral-dark: #1e293b;
+            --neutral-light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            /* Ajout d'un dégradé en arrière-plan pour faire ressortir l'effet vitre */
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: var(--neutral-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* BARRE DE NAVIGATION */
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Emplacement du LOGO */
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--neutral-dark);
+        }
+
+        /* L'icône du logo passe en effet vitre sombre pour le contraste */
+        .logo-icon {
+            background: rgba(30, 41, 59, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--neutral-dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: 1px solid rgba(30, 41, 59, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Bouton de navigation - EFFET VITRE SOMBRE */
+        .btn-nav-project {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-nav-project:hover {
+            background: rgba(30, 41, 59, 1);
+            transform: translateY(-1px);
+        }
+
+        .btn-lang {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-lang:hover { background: #475569; }
+
+        /* CONTENEUR PRINCIPAL */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+        }
+
+        /* Section Informations (Gauche) - EFFET VITRE SUR LE FOND FONCÉ */
+        .info-section {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #f8fafc;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .info-title h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .info-title p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .info-details {
+            margin: 40px 0;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* Les icônes passent en EFFET VITRE LUMINEUX (Glassmorphism) */
+        .info-icon {
+            font-size: 1.3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 10px;
+            border-radius: 10px;
+            color: var(--glass-text);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-text h4 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-text p {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .info-footer {
+            font-size: 0.8rem;
+            color: #475569;
+        }
+
+        /* Section Formulaire (Droite) */
+        .form-section {
+            padding: 40px;
+            background: #ffffff;
+        }
+
+        .form-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            color: var(--neutral-dark);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.95rem;
+            background: var(--neutral-light);
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--neutral-dark);
+            background: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Bouton Soumettre - EFFET VITRE SOMBRE COMPACT */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-submit:hover {
+            background: rgba(30, 41, 59, 1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Message de succès */
+        .success-message {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--success);
+            text-align: center;
+        }
+
+        /* Adaptation Écrans Mobiles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-section, .form-section {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PORTAL / NAVBAR -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <div class="logo-icon">💳</div>
+            <span>Smart Card System</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="index.html" id="link-app" class="btn-nav-project">Accéder au Générateur</a>
+            <button id="btn-lang" class="btn-lang" onclick="toggleLanguage()">🌐 English</button>
+        </div>
+    </nav>
+
+    <!-- ZONE DE CONTENU PRINCIPAL -->
+    <main class="main-content">
+        <div class="contact-container">
+            <div class="contact-grid">
+                
+                <!-- INFORMATIONS DE CONTACT -->
+                <div class="info-section">
+                    <div class="info-title">
+                        <h2 id="info-heading">Restons en contact</h2>
+                        <p id="info-subheading">Une question ou un besoin spécifique concernant notre système de gestion de cartes à puce et badges ? Écrivez-nous !</p>
+                    </div>
+
+                    <div class="info-details">
+                        <!-- Adresse -->
+                        <div class="info-item">
+                            <div class="info-icon">📍</div>
+                            <div class="info-text">
+                                <h4 id="lbl-address">Adresse</h4>
+                                <p>Kolwezi, Lualaba, RDC</p>
+                            </div>
+                        </div>
+                        <!-- Téléphone -->
+                        <div class="info-item">
+                            <div class="info-icon">📞</div>
+                            <div class="info-text">
+                                <h4 id="lbl-phone">Téléphone</h4>
+                                <p>+243 000 000 000</p>
+                            </div>
+                        </div>
+                        <!-- Email -->
+                        <div class="info-item">
+                            <div class="info-icon">✉️</div>
+                            <div class="info-text">
+                                <h4>Email</h4>
+                                <p>support@smartsecurity.com</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-footer">
+                        <span>© 2026 Smart Security System</span>
+                    </div>
+                </div>
+
+                <!-- FORMULAIRE DE CONTACT -->
+                <div class="form-section">
+                    <h3 id="form-heading">Envoyer un message</h3>
+                    
+                    <div id="success-box" class="success-message"></div>
+
+                    <form id="contact-form" onsubmit="envoyerMessage(event)">
+                        <div class="form-group">
+                            <label id="lbl-name" for="form-name">Nom complet</label>
+                            <input type="text" id="form-name" required placeholder="Ex: Benjamin Mazuya">
+                        </div>
+
+                        <div class="form-group">
+                            <label id="lbl-email" for="form-email">Adresse Email</label>
+                            <input type="email" id="form-email" required placeholder="Ex: benjamin@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label id="lbl-subject" for="form-subject">Sujet</label>
+                            <input type="text" id="form-subject" required placeholder="Ex: Demande de support technique">
+                        </div>
+
+                        <div class="form-group">
+                            <label id="lbl-message" for="form-message">Message</label>
+                            <textarea id="form-message" required placeholder="Votre message ici..."></textarea>
+                        </div>
+
+                        <button type="submit" id="btn-submit" class="btn-submit">🚀 Envoyer le message</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const translations = {
+            fr: {
+                btnLang: "🌐 English",
+                linkApp: "Accéder au Générateur",
+                infoHeading: "Restons en contact",
+                infoSubheading: "Une question ou un besoin spécifique concernant notre système de gestion de cartes à puce et badges ? Écrivez-nous !",
+                lblAddress: "Adresse",
+                lblPhone: "Téléphone",
+                formHeading: "Envoyer un message",
+                lblName: "Nom complet",
+                lblEmail: "Adresse Email",
+                lblSubject: "Sujet",
+                lblMessage: "Message",
+                btnSubmit: "🚀 Envoyer le message",
+                successMsg: "🎉 Merci ! Votre message a été envoyé avec succès."
+            },
+            en: {
+                btnLang: "🌐 Français",
+                linkApp: "Access Generator",
+                infoHeading: "Get in Touch",
+                infoSubheading: "Any questions or specific needs about our smart card and badge system? Write to us!",
+                lblAddress: "Address",
+                lblPhone: "Phone",
+                formHeading: "Send a Message",
+                lblName: "Full Name",
+                lblEmail: "Email Address",
+                lblSubject: "Subject",
+                lblMessage: "Message",
+                btnSubmit: "🚀 Send Message",
+                successMsg: "🎉 Thank you! Your message has been sent successfully."
+            }
+        };
+
+        let currentLang = 'fr';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'fr' ? 'en' : 'fr';
+            const data = translations[currentLang];
+
+            document.getElementById('btn-lang').textContent = data.btnLang;
+            document.getElementById('link-app').textContent = data.linkApp;
+            document.getElementById('info-heading').textContent = data.infoHeading;
+            document.getElementById('info-subheading').textContent = data.infoSubheading;
+            document.getElementById('lbl-address').textContent = data.lblAddress;
+            document.getElementById('lbl-phone').textContent = data.lblPhone;
+            document.getElementById('form-heading').textContent = data.formHeading;
+            document.getElementById('lbl-name').textContent = data.lblName;
+            document.getElementById('lbl-email').textContent = data.lblEmail;
+            document.getElementById('lbl-subject').textContent = data.lblSubject;
+            document.getElementById('lbl-message').textContent = data.lblMessage;
+            document.getElementById('btn-submit').textContent = data.btnSubmit;
+        }
+
+        function envoyerMessage(event) {
+            event.preventDefault();
+            
+            const successBox = document.getElementById('success-box');
+            successBox.textContent = translations[currentLang].successMsg;
+            successBox.style.display = 'block';
+
+            document.getElementById('contact-form').reset();
+
+            setTimeout(() => {
+                successBox.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
